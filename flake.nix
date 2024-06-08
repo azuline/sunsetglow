@@ -24,6 +24,9 @@
             titlesec
             ;
         };
+        py = pkgs.python311.withPackages (ps: with ps; [
+          jinja2
+        ]);
       in
       {
         devShell = pkgs.mkShell {
@@ -34,8 +37,10 @@
                 coreutils
                 moreutils
                 findutils
-                tex
+                inotify-tools
                 pandoc
+                py
+                tex
               ];
             })
           ];

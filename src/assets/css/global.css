@@ -23,43 +23,56 @@ p, h1, h2, h3, h4, h5, h6 {
 
 /* Fonts */
 @font-face {
-  font-family: "Computer Modern Sans";
-  src: url("ComputerModernSans-Regular.woff") format("woff");
+  font-family: "Roboto";
+  src: url("/assets/fonts/Roboto-Regular.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Computer Modern Sans";
-  src: url("ComputerModernSans-Bold.woff") format("woff");
+  font-family: "Roboto";
+  src: url("/assets/fonts/Roboto-Bold.woff2") format("woff2");
   font-weight: bold;
-}
-@font-face {
-  font-family: "Computer Modern Sans";
-  src: url("ComputerModernSans-Italic.woff") format("woff");
-  font-style: italic;
-}
-@font-face {
-  font-family: "Computer Modern Sans";
-  src: url("ComputerModernSans-BoldItalic.woff") format("woff");
-  font-weight: bold;
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "IBM Plex Sans";
-  src: url("IBMPlexSans-Variable-Roman.woff2") format("woff2");
-  font-weight: 100 1000;
   font-display: swap;
 }
 @font-face {
-  font-family: "IBM Plex Sans";
-  src: url("IBMPlexSans-Variable-Italic.woff2") format("woff2");
-  font-weight: 100 1000;
+  font-family: "Roboto";
+  src: url("/assets/fonts/Roboto-Italic.woff2") format("woff2");
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("/assets/fonts/Roboto-BoldItalic.woff2") format("woff2");
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBMPlexSans";
+  src: url("/assets/fonts/IBMPlexSans-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBMPlexSans";
+  src: url("/assets/fonts/IBMPlexSans-Bold.woff2") format("woff2");
+  font-weight: bold;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBMPlexSans";
+  src: url("/assets/fonts/IBMPlexSans-Italic.woff2") format("woff2");
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBMPlexSans";
+  src: url("/assets/fonts/IBMPlexSans-BoldItalic.woff2") format("woff2");
+  font-weight: bold;
   font-style: italic;
   font-display: swap;
 }
 
 html {
   /* Default font. */
-  font-family: "Computer Modern Sans";
+  font-family: "Roboto";
   font-weight: normal;
   font-size: 16px;
 
@@ -80,13 +93,23 @@ html {
 .display {
   font-family: "IBM Plex Sans";
   font-weight: 400;
-  letter-spacing: -2%;
+  letter-spacing: -.02rem;
 }
 .text-xl { font-size: var(--font-size-xl) }
 .text-lg { font-size: var(--font-size-lg) }
 .text-md { font-size: var(--font-size-md) }
 .text-sm { font-size: var(--font-size-sm) }
 .text-xs { font-size: var(--font-size-xs) }
+.bold { font-weight: bold }
+.italic { font-style: italic }
 .bg-base { color: var(--color-bg-base) }
 .fg-primary { color: var(--color-fg-primary) }
 .fg-secondary { color: var(--color-fg-secondary) }
+.flex { display: flex }
+.flex-col { flex-direction: column }
+.gap-1 { gap: .25rem }
+.gap-2 { gap: .5rem }
+.gap-4 { gap: 1rem }
+.mx-auto { margin-left: auto; margin-right: auto }
+.max-w-48 { max-width: 48rem }
+.py-8 { padding-top: 2rem; padding-bottom: 2rem }
