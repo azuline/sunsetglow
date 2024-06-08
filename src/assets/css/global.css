@@ -1,0 +1,92 @@
+/* Josh"s CSS Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  isolation: isolate;
+}
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+input, button, textarea, select {
+  font: inherit;
+}
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* Fonts */
+@font-face {
+  font-family: "Computer Modern Sans";
+  src: url("ComputerModernSans-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "Computer Modern Sans";
+  src: url("ComputerModernSans-Bold.woff") format("woff");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "Computer Modern Sans";
+  src: url("ComputerModernSans-Italic.woff") format("woff");
+  font-style: italic;
+}
+@font-face {
+  font-family: "Computer Modern Sans";
+  src: url("ComputerModernSans-BoldItalic.woff") format("woff");
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("IBMPlexSans-Variable-Roman.woff2") format("woff2");
+  font-weight: 100 1000;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("IBMPlexSans-Variable-Italic.woff2") format("woff2");
+  font-weight: 100 1000;
+  font-style: italic;
+  font-display: swap;
+}
+
+html {
+  /* Default font. */
+  font-family: "Computer Modern Sans";
+  font-weight: normal;
+  font-size: 16px;
+
+  /* Color variables. */
+  --color-bg-base: "#f3f9f8";
+  --color-fg-primary: "#071515";
+  --color-fg-secondary: "#313938";
+
+  /* Font Variables */
+  --font-size-xl: 2.5rem;
+  --font-size-lg: 2rem;
+  --font-size-md: 1.5rem;
+  --font-size-sm: 1rem;
+  --font-size-xs: .75rem;
+}
+
+/* Utility classes. */
+.display {
+  font-family: "IBM Plex Sans";
+  font-weight: 400;
+  letter-spacing: -2%;
+}
+.text-xl { font-size: var(--font-size-xl) }
+.text-lg { font-size: var(--font-size-lg) }
+.text-md { font-size: var(--font-size-md) }
+.text-sm { font-size: var(--font-size-sm) }
+.text-xs { font-size: var(--font-size-xs) }
+.bg-base { color: var(--color-bg-base) }
+.fg-primary { color: var(--color-fg-primary) }
+.fg-secondary { color: var(--color-fg-secondary) }
