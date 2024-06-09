@@ -4,8 +4,7 @@
 }
 
 .pandoc #TOC {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding: 1rem;
   margin-bottom: 1.5rem;
   background: var(--color-bg-nested);
   border: 2px solid var(--color-border);
@@ -15,7 +14,10 @@
   list-style-type: none;
 }
 .pandoc #TOC ul {
-  margin-left: -1rem;
+  padding-left: 0;
+}
+.pandoc #TOC li > ul {
+  padding-left: 1.25rem;
 }
 .pandoc #TOC a {
   color: var(--color-fg-primary);

@@ -16,8 +16,8 @@ JavaScript source code directly to the client leads to two primary problems:
 \begin{enumerate}
   \item \textbf{Unsupported Language Features:} Because JavaScript runs in the browser, and there
     are many browsers out there of a variety of versions, each language feature you use reduces the
-    number of clients that can execute your JavaScript. Furthermore, frameworks such as JSX, being
-    language extensions, are not valid JavaScript and will not run in any browser.
+    number of clients that can execute your JavaScript. Furthermore, language extensions like JSX
+    are not valid JavaScript and will not run in any browser.
 
   \item \textbf{Performance:} The browser must request each JavaScript file individually. In a large
     codebase, this can result in thousands of HTTP requests in order to render a single page. In the
@@ -93,8 +93,8 @@ See \href{https://github.com/zloirock/core-js}{core-js}.
 All bundlers are also inherently transpilers, as they parse multiple JavaScript source files and
 emit a new bundled JavaScript file. When doing so, they can pick which language features to use in
 their emitted JavaScript file. Some bundlers are additionally capable of parsing TypeScript and JSX
-source files. If your application has straightforward transpilation needs, the bundler alone may
-suffice.
+source files. If your application has straightforward transpilation needs, you may not need a
+separate transpiler.
 
 \subsection{Bundling}
 
@@ -200,8 +200,8 @@ convention (e.g. \texttt{/assets/css/banner.jpg} and \texttt{/assets/fonts/Inter
 Webpack ``loaders'' allowed the importing of static assets from JavaScript, unifying both code and
 static assets into a single dependency graph. During bundling, Webpack replaces the static asset
 import with its final path inside the distributable. This feature enabled static assets to be
-organized with its associated components in the source code, and added new possibilities for static
-analysis, such as detecting non-existent assets.
+organized with its associated components in the source code, and created new possibilities for
+static analysis, such as detecting non-existent assets.
 
 It is important to recognize that the importing of static assets
 (non-JavaScript-or-transpiles-to-JavaScript files) is not part of the JavaScript language. It
@@ -218,7 +218,7 @@ at the end of the build process.
 
 Several JavaScript minifiers in common use today are Terser, esbuild, and SWC.
 \href{https://terser.org/}{\textbf{Terser}} was forked from the unmaintained uglify-es. It is
-written in JavaScript and is somewhat slow. \textbf{Esbuild} and \tb{SWC}, mentioned previously,
+written in JavaScript and is somewhat slow. \textbf{Esbuild} and \textbf{SWC}, mentioned previously,
 implement minifiers in addition to their other capabilities and are faster than Terser.
 
 Several CSS minifiers in common use today are cssnano, csso, and Lightning CSS.
@@ -287,10 +287,10 @@ linear time complexity relative to application size. Hence, in large application
 Replacement can become very slow due to the growing rebundling cost.
 
 The no-bundle paradigm, currently championed by Vite, counters this by choosing to not bundle the
-development server, instead serving ESM modules, corresponding to the source files, directly to the
-browser. In this paradigm, each code change triggers a single module replacement in the frontend.
-This results in a near-constant refresh time complexity relative to application side. However, if
-you have a many modules, the initial page load may take longer.
+development server. Instead, Vite serves ESM modules, each corresponding to a source file, directly
+to the browser. In this paradigm, each code change triggers a single module replacement in the
+frontend. This results in a near-constant refresh time complexity relative to application side.
+However, if you have many modules, the initial page load may take longer.
 
 \subsection{Monorepos}
 

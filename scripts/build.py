@@ -69,6 +69,9 @@ def compile_posts():
         trim_start = post.find("</header>") + len("</header>")
         trim_end = post.find("</body")
         post = post[trim_start:trim_end]
+        # Wrap the main article inside a div.
+        nav_end = post.find("</nav>") + len("</nav>")
+        post = post[:nav_end] + '<div id="POST">' + post[nav_end:] + "</div>"
 
         # Wrap the post with a Jinja template.
         postmeta = meta[f.stem]
