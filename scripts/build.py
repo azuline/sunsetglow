@@ -12,7 +12,7 @@ import jinja2  # type: ignore
 
 
 def formatdate(x: str) -> str:
-    """Convert 2024/06/08 to June 08, 2024"""
+    """Convert 2024/06/08 to June 8, 2024"""
     dt = datetime.strptime(x, "%Y-%m-%d")
     return dt.strftime("%B %-d, %Y")
 
@@ -21,12 +21,9 @@ je = jinja2.Environment()
 je.filters["formatdate"] = formatdate
 
 
-def to_dist(p: Path) -> Path:
-    """Replace the first part of the path with dist."""
-    return Path("dist", *p.parts[1:])
-
-
 def empty_dist() -> None:
+    # Removing and recreating the directory messes with the `make watch+serve` workflow. So we
+    # instead empty the directory each time..
     for f in Path("dist/").iterdir():
         if f.is_file():
             f.unlink()
@@ -74,7 +71,7 @@ def compile_posts():
         post = tpl.render(meta=postmeta, body=post)
 
         # Write the compiled post.
-        with to_dist(f).with_suffix(".html").open("w") as fp:
+        with Path("dist", *f.parts[1:]).with_suffix(".html").open("w") as fp:
             fp.write(post)
 
 
@@ -82,7 +79,6 @@ def main():
     os.chdir(os.environ["PROJECT_ROOT"])
 
     empty_dist()
-    # TODO: Optimize assets.
     shutil.copytree("src/assets", "dist/assets")
     shutil.copyfile("src/index.html", "dist/index.html")
     compile_posts()

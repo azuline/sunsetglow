@@ -1,4 +1,4 @@
-/* Josh"s CSS Reset */
+/* Josh's CSS Reset */
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -21,51 +21,125 @@ p, h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
 }
 
+/* My reset. */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: inherit;
+}
+
 /* Fonts */
 @font-face {
   font-family: "Roboto";
   src: url("/assets/fonts/Roboto-Regular.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Roboto";
-  src: url("/assets/fonts/Roboto-Bold.woff2") format("woff2");
-  font-weight: bold;
-  font-display: swap;
+  font-weight: 400;
 }
 @font-face {
   font-family: "Roboto";
   src: url("/assets/fonts/Roboto-Italic.woff2") format("woff2");
+  font-weight: 400;
   font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("/assets/fonts/Roboto-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("/assets/fonts/Roboto-MediumItalic.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Roboto";
+  src: url("/assets/fonts/Roboto-Bold.woff2") format("woff2");
+  font-weight: 700;
   font-display: swap;
 }
 @font-face {
   font-family: "Roboto";
   src: url("/assets/fonts/Roboto-BoldItalic.woff2") format("woff2");
-  font-weight: bold;
+  font-weight: 700;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "IBMPlexSans";
+  font-family: "IBM Plex Sans";
   src: url("/assets/fonts/IBMPlexSans-Regular.woff2") format("woff2");
+  font-weight: 400;
 }
 @font-face {
-  font-family: "IBMPlexSans";
-  src: url("/assets/fonts/IBMPlexSans-Bold.woff2") format("woff2");
-  font-weight: bold;
-  font-display: swap;
-}
-@font-face {
-  font-family: "IBMPlexSans";
+  font-family: "IBM Plex Sans";
   src: url("/assets/fonts/IBMPlexSans-Italic.woff2") format("woff2");
+  font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
-  font-family: "IBMPlexSans";
+  font-family: "IBM Plex Sans";
+  src: url("/assets/fonts/IBMPlexSans-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/assets/fonts/IBMPlexSans-MediumItalic.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/assets/fonts/IBMPlexSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
   src: url("/assets/fonts/IBMPlexSans-BoldItalic.woff2") format("woff2");
-  font-weight: bold;
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/assets/fonts/IBMPlexMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/assets/fonts/IBMPlexMono-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/assets/fonts/IBMPlexMono-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/assets/fonts/IBMPlexMono-MediumItalic.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/assets/fonts/IBMPlexMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/assets/fonts/IBMPlexMono-BoldItalic.woff2") format("woff2");
+  font-weight: 700;
   font-style: italic;
   font-display: swap;
 }
@@ -93,13 +167,20 @@ html {
   background: var(--color-bg-base);
 }
 
-/* Utility classes. */
+/* Global application of variables. */
+code, pre { font-family: "IBM Plex Mono" }
+
+/* Utility classes below. */
+
+/* Font family. */
 .display {
   font-family: "IBM Plex Sans";
-  font-weight: 400;
-  letter-spacing: -.02rem;
+  /* letter-spacing: -.02rem; */
   line-height: 1.15;
 }
+.mono { font-family: "IBM Plex Mono" }
+
+/* Font size. */
 .text-xxl { font-size: var(--font-size-xxl) }
 .text-xl { font-size: var(--font-size-xl) }
 .text-lg { font-size: var(--font-size-lg) }
@@ -107,43 +188,99 @@ html {
 .text-sm { font-size: var(--font-size-sm) }
 .text-xs { font-size: var(--font-size-xs) }
 
-.bold { font-weight: bold }
+/* Font weight/style. */
+.regular { font-weight: 400 }
+.medium { font-weight: 500 }
+.bold { font-weight: 700 }
 .italic { font-style: italic }
 
+/* Text decoration. */
 .decoration-none { text-decoration: none }
+.decoration-underline { text-decoration: underline }
 
-.bg-base { color: var(--color-bg-base) }
-.bg-nested { color: var(--color-bg-nested) }
+/* Background color. */
+.bg-base { background: var(--color-bg-base) }
+.bg-nested { background: var(--color-bg-nested) }
+
+/* Foreground color. */
 .fg-primary { color: var(--color-fg-primary) }
 .fg-secondary { color: var(--color-fg-secondary) }
+
+/* Border color. */
 .border { color: var(--color-border) }
 
+/* Flex. */
 .flex { display: flex }
 .flex-col { flex-direction: column }
 
+/* Gap. */
 .gap-1 { gap: .25rem }
 .gap-2 { gap: .5rem }
 .gap-4 { gap: 1rem }
+.gap-6 { gap: 1.5rem }
 .gap-8 { gap: 2rem }
+.gap-12 { gap: 3rem }
+.gap-16 { gap: 4rem }
 
+/* Margin. */
 .mx-auto { margin-left: auto; margin-right: auto }
 
+/* Padding. */
 .p-1 { padding: .25rem }
 .p-2 { padding: .5rem }
 .p-4 { padding: 1rem }
 .p-6 { padding: 1.5rem }
 .p-8 { padding: 2rem }
-.p-10 { padding: 2.5rem }
+.p-12 { padding: 3rem }
+.p-16 { padding: 4rem }
+.px-1 { padding-left: .25rem; padding-right: .25rem }
+.px-2 { padding-left: .5rem; padding-right: .5rem }
+.px-4 { padding-left: 1rem; padding-right: 1rem }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem }
+.px-8 { padding-left: 2rem; padding-right: 2rem }
+.px-12 { padding-left: 3rem; padding-right: 3rem }
+.px-16 { padding-left: 4rem; padding-right: 4rem }
 .py-1 { padding-top: .25rem; padding-bottom: .25rem }
 .py-2 { padding-top: .5rem; padding-bottom: .5rem }
 .py-4 { padding-top: 1rem; padding-bottom: 1rem }
 .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem }
 .py-8 { padding-top: 2rem; padding-bottom: 2rem }
-.py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem }
+.py-12 { padding-top: 3rem; padding-bottom: 3rem }
+.py-16 { padding-top: 4rem; padding-bottom: 4rem }
+.pl-1 { padding-left: .25rem }
+.pl-2 { padding-left: .5rem }
+.pl-4 { padding-left: 1rem }
+.pl-6 { padding-left: 1.5rem }
+.pl-8 { padding-left: 2rem }
+.pl-12 { padding-left: 3rem }
+.pl-16 { padding-left: 4rem }
+.pt-1 { padding-top: .25rem }
+.pt-2 { padding-top: .5rem }
+.pt-4 { padding-top: 1rem }
+.pt-6 { padding-top: 1.5rem }
+.pt-8 { padding-top: 2rem }
+.pt-12 { padding-top: 3rem }
+.pt-16 { padding-top: 4rem }
+.pr-1 { padding-right: .25rem }
+.pr-2 { padding-right: .5rem }
+.pr-4 { padding-right: 1rem }
+.pr-6 { padding-right: 1.5rem }
+.pr-8 { padding-right: 2rem }
+.pr-12 { padding-right: 3rem }
+.pr-16 { padding-right: 4rem }
+.pb-1 { padding-bottom: .25rem }
+.pb-2 { padding-bottom: .5rem }
+.pb-4 { padding-bottom: 1rem }
+.pb-6 { padding-bottom: 1.5rem }
+.pb-8 { padding-bottom: 2rem }
+.pb-12 { padding-bottom: 3rem }
+.pb-16 { padding-bottom: 4rem }
 
+/* Width. */
 .w-content { width: fit-content }
 .w-full { width: 100% }
 
+/* Max width. */
 .max-w-32 { max-width: 32rem }
 .max-w-36 { max-width: 36rem }
 .max-w-42 { max-width: 42rem }

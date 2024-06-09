@@ -1,10 +1,3 @@
-.pandoc h1:first-child {
-  font-size: var(--font-size-xxl);
-  font-weight: bold;
-  text-decoration: underline;
-  padding-bottom: .75rem;
-}
-
 .pandoc .toc-section-number::after,
 .pandoc .header-section-number::after {
   content: ".";
@@ -15,7 +8,7 @@
   padding-bottom: 1rem;
   margin-bottom: 1.5rem;
   background: var(--color-bg-nested);
-  border: 2px dashed var(--color-border);
+  border: 2px solid var(--color-border);
 }
 .pandoc #TOC ul,
 .pandoc #TOC li {
@@ -23,6 +16,9 @@
 }
 .pandoc #TOC ul {
   margin-left: -1rem;
+}
+.pandoc #TOC a {
+  color: var(--color-fg-primary);
 }
 
 .pandoc h1,
