@@ -27,34 +27,68 @@
         py = pkgs.python311.withPackages (ps: with ps; [
           jinja2
         ]);
+        shellHook = ''
+          find-up () {
+            path=$(pwd)
+            while [[ "$path" != "" && ! -e "$path/$1" ]]; do
+              path=''${path%/*}
+            done
+            echo "$path"
+          }
+
+          export PROJECT_ROOT="$(find-up flake.nix)"
+        '';
       in
       {
-        devShell = pkgs.mkShell {
-          buildInputs = [
-            (pkgs.buildEnv {
-              name = "studies-env";
-              paths = with pkgs; [
-                coreutils
-                moreutils
-                findutils
-                inotify-tools
-                pandoc
-                py
-                tex
-              ];
-            })
-          ];
-          shellHook = ''
-            find-up () {
-              path=$(pwd)
-              while [[ "$path" != "" && ! -e "$path/$1" ]]; do
-                path=''${path%/*}
-              done
-              echo "$path"
-            }
-
-            export PROJECT_ROOT="$(find-up flake.nix)"
-          '';
+        devShells = {
+          build = pkgs.mkShell {
+            inherit shellHook;
+            buildInputs = [
+              (pkgs.buildEnv {
+                name = "sg-build";
+                paths = with pkgs; [
+                  coreutils
+                  moreutils
+                  findutils
+                  curl
+                  pandoc
+                  py
+                  tex
+                ];
+              })
+            ];
+          };
+          deploy = pkgs.mkShell {
+            inherit shellHook;
+            buildInputs = [
+              (pkgs.buildEnv {
+                name = "sg-deploy";
+                paths = with pkgs; [
+                  coreutils
+                  moreutils
+                  findutils
+                  levant
+                ];
+              })
+            ];
+          };
+          default = pkgs.mkShell {
+            inherit shellHook;
+            buildInputs = [
+              (pkgs.buildEnv {
+                name = "sg-dev";
+                paths = with pkgs; [
+                  coreutils
+                  moreutils
+                  findutils
+                  inotify-tools
+                  pandoc
+                  py
+                  tex
+                ];
+              })
+            ];
+          };
         };
       }
     );
