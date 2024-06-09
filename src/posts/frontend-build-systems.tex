@@ -175,7 +175,7 @@ the unused exports of its modules in a process called \textit{tree shaking}. Thi
 bundle size, improving loading and parsing times.
 
 Tree shaking depends on static analysis of the source files, and is thus impeded when static
-analysis is made more challenging. Two major factors can diminish the efficiency of tree shaking:
+analysis is made more challenging. Two primary factors influence the efficiency of tree shaking:
 
 \begin{enumerate}
   \item \textbf{Module System:} ES6 Modules have static exports and imports, while CommonJS modules
@@ -254,21 +254,21 @@ application paradigm. They are suitable for generic frontend applications.
 \subsection{Sourcemaps}
 
 The distributable emitted by the build pipeline is illegible to most humans. This makes it difficult
-to debug any errors that occur, as they point to unreadable code in their tracebacks.
+to debug any errors that occur, as their tracebacks point to illegible code.
 
 Sourcemaps resolve this problem by mapping code in the distributable back to its original location
-in the source code. The browser and triage tools (e.g. Sentry) can make use of sourcemaps to restore
-and display the original source code when debugging. In production, sourcemaps are often hidden from
-the browser and only uploaded to triage tools to avoid publicizing the source code.
+in the source code. The browser and triage tools (e.g. Sentry) use the sourcemaps to restore and
+display the original source code. In production, sourcemaps are often hidden from the browser and
+only uploaded to triage tools to avoid publicizing the source code.
 
 Each step of the build pipeline can emit a sourcemap. If multiple build tools are used to construct
-the pipeline, the sourcemaps will form a chain (e.g. \texttt{source.js -> transpiler.map ->
-bundler.map -> minifier.map}). In order to identify the source code corresponding to the minified
-code, the chain of source maps must be traversed.
+the pipeline, the sourcemaps will form a chain (e.g. \texttt{source.js} -> \texttt{transpiler.map}
+-> \texttt{bundler.map} -> \texttt{minifier.map}). In order to identify the source code
+corresponding to the minified code, the chain of source maps must be traversed.
 
 However, most tools are not capable of interpreting a chain of sourcemaps; they expect at most one
-sourcemap per file in the distributable. Thus, the chain of sourcemaps must be flattened into a
-single sourcemap. Preconfigured build systems will solve this problem for you (see Vite's
+sourcemap per file in the distributable. The chain of sourcemaps must be flattened into a single
+sourcemap. Preconfigured build systems will solve this problem (see Vite's
 \href{https://github.com/vitejs/vite/blob/feae09fdfab505e58950c915fe5d8dd103d5ffb9/packages/vite/src/node/utils.ts\#L831}{\texttt{combineSourcemaps}}
 function).
 
@@ -278,13 +278,13 @@ Development servers often provide a Hot Reload feature, which automatically rebu
 source code changes and reloads the browser. While greatly superior to rebuilding and reloading
 manually, it is still somewhat slow, and all client-side state is lost on reload.
 
-Hot Module Replacement improves on Hot Reload by replacing changed bundles in the running
+Hot Module Replacement improves upon Hot Reload by replacing changed bundles in the running
 application, an in-place update. This preserves the client-side state of unchanged modules and
 reduces the latency between code change and updated application.
 
-However, each code change still requires the rebuild of all bundles that import it. This has a
-linear time complexity relative to application size. Hence, in large applications, Hot Module
-Replacement can become very slow due to the growing rebundling cost.
+However, each code change triggers the rebuild of all the bundles that import it. This has a linear
+time complexity relative to application size. Hence, in large applications, Hot Module Replacement
+can become slow due to the growing rebundling cost.
 
 The no-bundle paradigm, currently championed by Vite, counters this by choosing to not bundle the
 development server. Instead, Vite serves ESM modules, each corresponding to a source file, directly
