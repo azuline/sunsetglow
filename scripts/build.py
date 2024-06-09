@@ -21,9 +21,20 @@ je = jinja2.Environment()
 je.filters["formatdate"] = formatdate
 
 
-def dist(p: Path) -> Path:
+def to_dist(p: Path) -> Path:
     """Replace the first part of the path with dist."""
     return Path("dist", *p.parts[1:])
+
+
+def empty_dist() -> None:
+    for f in Path("dist/").iterdir():
+        if f.is_file():
+            f.unlink()
+        elif f.is_dir():
+            shutil.rmtree(f)
+        else:
+            raise Exception(f"{f} is not a file or directory.")
+    Path("dist/").mkdir(exist_ok=True)
 
 
 def compile_posts():
@@ -39,7 +50,15 @@ def compile_posts():
         # Compile the post from LaTeX to HTML.
         with tempfile.NamedTemporaryFile(suffix=".html") as tmp:
             subprocess.run(
-                ["pandoc", "--standalone", str(f), "--table-of-contents", "-o", tmp.name],
+                [
+                    "pandoc",
+                    "--standalone",  # Puts TOC into the .html, but we have to trim the rest.
+                    "--table-of-contents",
+                    "--number-sections",
+                    str(f),
+                    "-o",
+                    tmp.name,
+                ],
                 check=True,
             )
             tmp.seek(0)
@@ -55,23 +74,14 @@ def compile_posts():
         post = tpl.render(meta=postmeta, body=post)
 
         # Write the compiled post.
-        with dist(f).with_suffix(".html").open("w") as fp:
+        with to_dist(f).with_suffix(".html").open("w") as fp:
             fp.write(post)
 
 
 def main():
     os.chdir(os.environ["PROJECT_ROOT"])
 
-    # Prepare a clean dist directory.
-    for f in Path("dist/").iterdir():
-        if f.is_file():
-            f.unlink()
-        elif f.is_dir():
-            shutil.rmtree(f)
-        else:
-            raise Exception(f"{f} is not a file or directory.")
-    Path("dist/").mkdir(exist_ok=True)
-
+    empty_dist()
     # TODO: Optimize assets.
     shutil.copytree("src/assets", "dist/assets")
     shutil.copyfile("src/index.html", "dist/index.html")

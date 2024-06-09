@@ -71,22 +71,26 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 html {
-  /* Default font. */
+  /* Color variables. */
+  --color-bg-base: #fafcfc;
+  --color-bg-nested: #f5f9f9;
+  --color-fg-primary: #071515;
+  --color-fg-secondary: #313938;
+  --color-border: #cbddd8;
+
+  /* Font Variables */
+  --font-size-xxl: 2.25rem;
+  --font-size-xl: 1.75rem;
+  --font-size-lg: 1.5rem;
+  --font-size-md: 1.25rem;
+  --font-size-sm: 1rem;
+  --font-size-xs: .75rem;
+
+  /* Defaults. */
   font-family: "Roboto";
   font-weight: normal;
   font-size: 16px;
-
-  /* Color variables. */
-  --color-bg-base: "#f3f9f8";
-  --color-fg-primary: "#071515";
-  --color-fg-secondary: "#313938";
-
-  /* Font Variables */
-  --font-size-xl: 2.5rem;
-  --font-size-lg: 2rem;
-  --font-size-md: 1.5rem;
-  --font-size-sm: 1rem;
-  --font-size-xs: .75rem;
+  background: var(--color-bg-base);
 }
 
 /* Utility classes. */
@@ -94,22 +98,53 @@ html {
   font-family: "IBM Plex Sans";
   font-weight: 400;
   letter-spacing: -.02rem;
+  line-height: 1.15;
 }
+.text-xxl { font-size: var(--font-size-xxl) }
 .text-xl { font-size: var(--font-size-xl) }
 .text-lg { font-size: var(--font-size-lg) }
 .text-md { font-size: var(--font-size-md) }
 .text-sm { font-size: var(--font-size-sm) }
 .text-xs { font-size: var(--font-size-xs) }
+
 .bold { font-weight: bold }
 .italic { font-style: italic }
+
+.decoration-none { text-decoration: none }
+
 .bg-base { color: var(--color-bg-base) }
+.bg-nested { color: var(--color-bg-nested) }
 .fg-primary { color: var(--color-fg-primary) }
 .fg-secondary { color: var(--color-fg-secondary) }
+.border { color: var(--color-border) }
+
 .flex { display: flex }
 .flex-col { flex-direction: column }
+
 .gap-1 { gap: .25rem }
 .gap-2 { gap: .5rem }
 .gap-4 { gap: 1rem }
+.gap-8 { gap: 2rem }
+
 .mx-auto { margin-left: auto; margin-right: auto }
-.max-w-48 { max-width: 48rem }
+
+.p-1 { padding: .25rem }
+.p-2 { padding: .5rem }
+.p-4 { padding: 1rem }
+.p-6 { padding: 1.5rem }
+.p-8 { padding: 2rem }
+.p-10 { padding: 2.5rem }
+.py-1 { padding-top: .25rem; padding-bottom: .25rem }
+.py-2 { padding-top: .5rem; padding-bottom: .5rem }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem }
+.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem }
 .py-8 { padding-top: 2rem; padding-bottom: 2rem }
+.py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem }
+
+.w-content { width: fit-content }
+.w-full { width: 100% }
+
+.max-w-32 { max-width: 32rem }
+.max-w-36 { max-width: 36rem }
+.max-w-42 { max-width: 42rem }
+.max-w-48 { max-width: 48rem }

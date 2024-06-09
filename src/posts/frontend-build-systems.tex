@@ -108,7 +108,7 @@ The bundlers in common use today are Webpack, Parcel, Rollup, esbuild, and Turbo
 \begin{enumerate}
   \item \href{https://webpack.js.org/}{\textbf{Webpack}} (2014) started gaining significant
     popularity around 2016, later becoming the standard bundler. Unlike the then-incumbent
-    Browserify, which was commonly used with the Gulp task runner, Webpack pioneered ``loaders" that
+    Browserify, which was commonly used with the Gulp task runner, Webpack pioneered ``loaders'' that
     transformed source files upon import, allowing Webpack to orchestrate the entire build pipeline.
 
     Loaders also allowed developers to transparently import static assets inside JavaScript files,
@@ -125,7 +125,7 @@ The bundlers in common use today are Webpack, Parcel, Rollup, esbuild, and Turbo
     is a single-threaded bundler written in JavaScript, only slightly more performant than Webpack.
 
   \item \href{https://parceljs.org/}{\textbf{Parcel}} (2018) is a low-configuration bundler designed
-    to ``just work" out of the box, providing sensible default configurations for all steps of the
+    to ``just work'' out of the box, providing sensible default configurations for all steps of the
     build process and developer tooling needs. Parcel 2 uses SWC under the hood. It is much faster
     than Webpack and Rollup.
 
@@ -197,7 +197,7 @@ an independent build task. To load the static assets, the application had to ref
 final path in the distributable. Thus, it was common to carefully organize assets around a URL
 convention (e.g. \texttt{/assets/css/banner.jpg} and \texttt{/assets/fonts/Inter.woff2}).
 
-Webpack ``loaders" allowed the importing of static assets from JavaScript, unifying both code and
+Webpack ``loaders'' allowed the importing of static assets from JavaScript, unifying both code and
 static assets into a single dependency graph. During bundling, Webpack replaces the static asset
 import with its final path inside the distributable. This feature enabled static assets to be
 organized with its associated components in the source code, and added new possibilities for static
@@ -206,7 +206,7 @@ analysis, such as detecting non-existent assets.
 It is important to recognize that the importing of static assets
 (non-JavaScript-or-transpiles-to-JavaScript files) is not part of the JavaScript language. It
 requires a bundler configured with support for that asset type. Fortunately, the bundlers that
-followed Webpack also adopted the ``loaders" pattern, making this feature commonplace.
+followed Webpack also adopted the ``loaders'' pattern, making this feature commonplace.
 
 \subsection{Minification}
 
@@ -236,7 +236,7 @@ improve upon developer experience.
 
 \subsection{Meta-Frameworks}
 
-The frontend space is notorious for the challenge of picking the ``right" packages to use. For
+The frontend space is notorious for the challenge of picking the ``right'' packages to use. For
 example, of the five bundlers listed above, which should you pick?
 
 Meta-frameworks provide a curated set of already selected packages, including build tools, that
@@ -247,15 +247,9 @@ synergize and enable specialized application paradigms. For example,
 Meta-frameworks typically provide a preconfigured build system, removing the need for you to stitch
 one together. Their build systems have configurations for both production and development servers.
 
-Like meta-frameworks, build tools like \href{https://create-react-app.dev/}{Create React App} and
-\href{https://vitejs.dev/}{Vite} provide preconfigured build systems for both production and
-development, but they do not force a specialized application paradigm. They are suitable for generic
-frontend applications.
-
-Create React App provides a preconfigured Webpack and Babel-based build system. Vite provides a
-preconfigured Rollup based-build system with support for both Babel and SWC via plugins. Vite also
-does not bundle modules in the development server. This allows Vite to quickly start the development
-server and have a near-constant time complexity Hot Module Replacement relative to application size.
+Like meta-frameworks, build tools like \href{https://vitejs.dev/}{Vite} provide preconfigured build
+systems for both production and development. Unlike meta-frameworks, they do not force a specialized
+application paradigm. They are suitable for generic frontend applications.
 
 \subsection{Sourcemaps}
 
@@ -310,7 +304,7 @@ incremental rebuilds, parallelism, and remote caching. With these features, larg
 enjoy the build times of small codebases.
 
 The broader industry-standard monorepo tools are those like Bazel, Buck, and Pants. These are
-``proper" build systems with robust features like sandboxing and remote builds. Unfortunately,
+``proper'' build systems with robust features like sandboxing and remote builds. Unfortunately,
 JavaScript for frontend is one of the hardest languages to completely integrate with these tools,
 and there is currently little prior art.
 

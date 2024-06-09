@@ -1,0 +1,90 @@
+.pandoc h1:first-child {
+  font-size: var(--font-size-xxl);
+  font-weight: bold;
+  text-decoration: underline;
+  padding-bottom: .75rem;
+}
+
+.pandoc .toc-section-number::after,
+.pandoc .header-section-number::after {
+  content: ".";
+}
+
+.pandoc #TOC {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  background: var(--color-bg-nested);
+  border: 2px dashed var(--color-border);
+}
+.pandoc #TOC ul,
+.pandoc #TOC li {
+  list-style-type: none;
+}
+.pandoc #TOC ul {
+  margin-left: -1rem;
+}
+
+.pandoc h1,
+.pandoc h2,
+.pandoc h3,
+.pandoc h4 {
+  font-family: "IBM Plex Sans";
+  font-weight: normal;
+  letter-spacing: -.02rem;
+  line-height: 1.15;
+}
+
+.pandoc h1 {
+  font-size: var(--font-size-xxl);
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
+}
+
+.pandoc h2 {
+  font-size: var(--font-size-xl);
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
+}
+
+.pandoc h3 {
+  font-size: var(--font-size-lg);
+  padding-top: 1rem;
+  padding-bottom: .75rem;
+}
+
+.pandoc h4 {
+  font-size: var(--font-size-md);
+  padding-top: 1rem;
+  padding-bottom: .75rem;
+}
+
+.pandoc p {
+  padding-bottom: .5rem;
+}
+
+.pandoc .footnote-ref {
+  font-size: var(--font-size-xs);
+}
+
+.pandoc blockquote {
+  margin: 0 24px 8px 24px;
+  line-height: 1.25;
+  font-size: var(--font-size-xs);
+  border-left: 2px solid #ddd;
+  color: #474747;
+}
+.pandoc blockquote > p {
+  padding: 2px 0 4px 12px;
+}
+
+.pandoc ol,
+.pandoc ul {
+  padding-bottom: .5rem;
+}
+.pandoc #TOC ol,
+.pandoc #TOC ul,
+.pandoc #TOC p
+{
+  padding-bottom: 0;
+}

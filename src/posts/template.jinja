@@ -9,12 +9,15 @@
     <title>{{ meta.title }}</title>
   </head>
   <body>
-    <div class="flex flex-col gap-4 max-w-48 mx-auto py-8">
-      <div class="flex flex-col gap-2">
-        <div class="display text-xl">{{ meta.title }}</div>
+    <div class="max-w-36 mx-auto py-8">
+      <div class="display text-md"><a class="decoration-none fg-primary" href="/">sunset glow</a></div>
+      <div class="py-8" />
+      <div class="flex flex-col gap-4">
+        <div class="display text-xxl bold">{{ meta.title }}</div>
         <div class="display text-sm fg-secondary italic">{{ meta.date | formatdate }}</div>
       </div>
-      <div class="">
+      <div class="py-4 w-full"></div>
+      <div class="pandoc">
         {{ body | safe }}
       </div>
     </div>
