@@ -23,15 +23,19 @@ je.filters["formatdate"] = formatdate
 
 def empty_dist() -> None:
     # Removing and recreating the directory messes with the `make watch+serve` workflow. So we
-    # instead empty the directory each time..
-    for f in Path("dist/").iterdir():
+    # instead empty the directory each time if it already exists.
+    p = Path("dist")
+    if not p.is_dir():
+        if p.is_file():
+            p.unlink()
+        p.mkdir()
+    for f in p.iterdir():
         if f.is_file():
             f.unlink()
         elif f.is_dir():
             shutil.rmtree(f)
         else:
             raise Exception(f"{f} is not a file or directory.")
-    Path("dist/").mkdir(exist_ok=True)
 
 
 def compile_posts():
