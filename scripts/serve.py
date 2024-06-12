@@ -12,7 +12,7 @@ if not p.exists():
     exit(1)
 os.chdir(p)
 
-PORT = 8080
+PORT = 27771
 Handler = http.server.SimpleHTTPRequestHandler
 with socketserver.TCPServer(("", PORT), Handler) as httpd:
     print(f"Serving build on http://localhost:{PORT}")
