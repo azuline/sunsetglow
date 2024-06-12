@@ -175,10 +175,13 @@ code, pre { font-family: "IBM Plex Mono" }
 /* Font family. */
 .display {
   font-family: "IBM Plex Sans";
-  /* letter-spacing: -.02rem; */
+  letter-spacing: -.02rem;
   line-height: 1.15;
 }
 .mono { font-family: "IBM Plex Mono" }
+
+/* Line height. */
+.label { line-height: 1 }
 
 /* Font size. */
 .text-xxl { font-size: var(--font-size-xxl) }

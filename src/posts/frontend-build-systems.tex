@@ -6,9 +6,8 @@
 \maketitle
 \tableofcontents
 
-Developers write JavaScript, browsers run JavaScript. Fundamentally, no build step is necessary in
-frontend development. This is especially true for simple frontends. So why do we have a build step
-in modern frontend?
+Developers write JavaScript; browsers run JavaScript. Fundamentally, no build step is necessary in
+frontend development. So why do we have a build step in modern frontend?
 
 As frontend codebases grow larger, and as developer ergonomics become more important, shipping
 JavaScript source code directly to the client leads to two primary problems:
@@ -83,7 +82,8 @@ The transpilers in common use today are Babel, SWC, and TypeScript Compiler.
     transpiler will be much more performant.
 \end{enumerate}
 
-It is also possible to skip the transpilation step if your code is pure ES6 and uses ES6 Modules.
+It is also possible to skip the transpilation step if your code is pure JavaScript and uses ES6
+Modules.
 
 An alternative solution for a subset of unsupported language features is a polyfill. Polyfills are
 executed at runtime and implement any missing language features prior to executing the main
@@ -241,15 +241,15 @@ example, of the five bundlers listed above, which should you pick?
 
 Meta-frameworks provide a curated set of already selected packages, including build tools, that
 synergize and enable specialized application paradigms. For example,
-\href{https://nextjs.org}{Next.JS} specializes in Server-Side Rendering (SSR) and
-\href{https://remix.run}{Remix} specializes in progressive enhancement.
+\href{https://nextjs.org}{\tb{Next.JS}} specializes in Server-Side Rendering (SSR) and
+\href{https://remix.run}{\tb{Remix}} specializes in progressive enhancement.
 
 Meta-frameworks typically provide a preconfigured build system, removing the need for you to stitch
 one together. Their build systems have configurations for both production and development servers.
 
-Like meta-frameworks, build tools like \href{https://vitejs.dev/}{Vite} provide preconfigured build
-systems for both production and development. Unlike meta-frameworks, they do not force a specialized
-application paradigm. They are suitable for generic frontend applications.
+Like meta-frameworks, build tools like \href{https://vitejs.dev/}{\tb{Vite}} provide preconfigured
+build systems for both production and development. Unlike meta-frameworks, they do not force a
+specialized application paradigm. They are suitable for generic frontend applications.
 
 \subsection{Sourcemaps}
 
@@ -322,9 +322,9 @@ uses Nx under the hood to power builds.
 \section{Trends}
 
 Newer build tools are written in compiled languages and emphasize performance. Frontend builds were
-terribly slow in 2019, but modern tools have greatly sped it up. However, modern tools faster tools
-have smaller feature sets and are sometimes incompatible with libraries, so legacy codebases often
-cannot easily switch to them.
+terribly slow in 2019, but modern tools have greatly sped it up. However, modern tools have smaller
+feature sets and are sometimes incompatible with libraries, so legacy codebases often cannot easily
+switch to them.
 
 Server-Side Rendering (SSR) has become more popular after the rise of Next.JS. SSR does not
 introduce any fundamental differences to frontend build systems. SSR applications must also serve
