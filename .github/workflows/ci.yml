@@ -13,8 +13,8 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
       - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v20
-      - uses: cachix/cachix-action@v12
+      - uses: cachix/install-nix-action@v27
+      - uses: cachix/cachix-action@v15
         with:
           name: sunsetglow
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
@@ -59,8 +59,8 @@ jobs:
       NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
     steps:
       - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v20
-      - uses: cachix/cachix-action@v12
+      - uses: cachix/install-nix-action@v27
+      - uses: cachix/cachix-action@v15
         with:
           name: sunsetglow
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
