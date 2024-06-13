@@ -57,10 +57,11 @@ transpiled to JavaScript. If a library offers a Babel plugin, that usually means
 transpilation step. Additionally, languages such as TypeScript, CoffeeScript, and Elm must be
 transpiled to JavaScript.
 
-CommonJS modules (CJS) must also be transpiled to a browser-compatible module system. After browsers
-added widespread support for ES6 Modules (ESM) in 2018, transpilation to ESM has generally been
-recommended. ESM is furthermore easier to optimize and tree-shake since its imports and exports are
-statically defined.
+\href{https://wiki.commonjs.org/wiki/Modules}{CommonJS modules} (CJS) must also be transpiled to a
+browser-compatible module system. After browsers added widespread support for
+\href{https://exploringjs.com/es6/ch_modules.html}{ES6 Modules} (ESM) in 2018, transpilation to ESM
+has generally been recommended. ESM is furthermore easier to optimize and tree-shake since its
+imports and exports are statically defined.
 
 The transpilers in common use today are Babel, SWC, and TypeScript Compiler.
 
@@ -256,10 +257,11 @@ force a specialized application paradigm. They are suitable for generic frontend
 The distributable emitted by the build pipeline is illegible to most humans. This makes it difficult
 to debug any errors that occur, as their tracebacks point to illegible code.
 
-Sourcemaps resolve this problem by mapping code in the distributable back to its original location
-in the source code. The browser and triage tools (e.g. Sentry) use the sourcemaps to restore and
-display the original source code. In production, sourcemaps are often hidden from the browser and
-only uploaded to triage tools to avoid publicizing the source code.
+\href{https://developer.chrome.com/blog/sourcemaps/}{Sourcemaps} resolve this problem by mapping
+code in the distributable back to its original location in the source code. The browser and triage
+tools (e.g. Sentry) use the sourcemaps to restore and display the original source code. In
+production, sourcemaps are often hidden from the browser and only uploaded to triage tools to avoid
+publicizing the source code.
 
 Each step of the build pipeline can emit a sourcemap. If multiple build tools are used to construct
 the pipeline, the sourcemaps will form a chain (e.g. \texttt{source.js} -> \texttt{transpiler.map}
@@ -278,19 +280,21 @@ Development servers often provide a Hot Reload feature, which automatically rebu
 source code changes and reloads the browser. While greatly superior to rebuilding and reloading
 manually, it is still somewhat slow, and all client-side state is lost on reload.
 
-Hot Module Replacement improves upon Hot Reload by replacing changed bundles in the running
-application, an in-place update. This preserves the client-side state of unchanged modules and
-reduces the latency between code change and updated application.
+\href{https://webpack.js.org/concepts/hot-module-replacement/}{Hot Module Replacement} improves upon
+Hot Reload by replacing changed bundles in the running application, an in-place update. This
+preserves the client-side state of unchanged modules and reduces the latency between code change and
+updated application.
 
 However, each code change triggers the rebuild of all the bundles that import it. This has a linear
 time complexity relative to application size. Hence, in large applications, Hot Module Replacement
 can become slow due to the growing rebundling cost.
 
-The no-bundle paradigm, currently championed by Vite, counters this by choosing to not bundle the
-development server. Instead, Vite serves ESM modules, each corresponding to a source file, directly
-to the browser. In this paradigm, each code change triggers a single module replacement in the
-frontend. This results in a near-constant refresh time complexity relative to application side.
-However, if you have many modules, the initial page load may take longer.
+The \href{https://vitejs.dev/guide/why.html}{no-bundle paradigm}, currently championed by Vite,
+counters this by choosing to not bundle the development server. Instead, Vite serves ESM modules,
+each corresponding to a source file, directly to the browser. In this paradigm, each code change
+triggers a single module replacement in the frontend. This results in a near-constant refresh time
+complexity relative to application side. However, if you have many modules, the initial page load
+may take longer.
 
 \subsection{Monorepos}
 
@@ -303,21 +307,19 @@ Monorepo tools orchestrate the building of the dependency graph. They often prov
 incremental rebuilds, parallelism, and remote caching. With these features, large codebases can
 enjoy the build times of small codebases.
 
-The broader industry-standard monorepo tools are those like Bazel, Buck, and Pants. These are
-``proper'' build systems with robust features like sandboxing and remote builds. Unfortunately,
-JavaScript for frontend is one of the hardest languages to completely integrate with these tools,
-and there is currently little prior art.
+The broader industry-standard monorepo tools, like  \href{https://bazel.build/}{Bazel}, support a
+broad set of languages, complicated build graphs, and hermetic execution. However, JavaScript for
+frontend is one of the hardest ecosystems to completely integrate with these tools, and there is
+currently little prior art.
 
 Fortunately, there exist several monorepo tools designed specifically for frontend. Unfortunately,
-they lack the same robust features and guarantees that Bazel, Buck, and Pants have. In these tools,
-build graphs have limited expressivity and builds can have implicit dependencies.
+they lack the flexibility and robustness of Bazel et al, most notably hermetic execution.
 
 The frontend-specific monorepo tools in common use today are \href{https://nx.dev/}{\textbf{Nx}} and
-\href{https://turbo.build/repo}{\textbf{Turborepo}}. They do not differ greatly. Nx is more mature,
-while Turborepo is part of the Vercel ecosystem. In the past,
-\href{https://lerna.js.org/}{\textbf{Lerna}} was the standard tool for linking multiple JavaScript
-packages together and publishing them to NPM. In 2022, the Nx team took over Lerna, and Lerna now
-uses Nx under the hood to power builds.
+\href{https://turbo.build/repo}{\textbf{Turborepo}}. Nx is more mature and featureful, while
+Turborepo is part of the Vercel ecosystem. In the past, \href{https://lerna.js.org/}{\textbf{Lerna}}
+was the standard tool for linking multiple JavaScript packages together and publishing them to NPM.
+In 2022, the Nx team took over Lerna, and Lerna now uses Nx under the hood to power builds.
 
 \section{Trends}
 
