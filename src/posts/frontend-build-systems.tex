@@ -139,7 +139,7 @@ The bundlers in common use today are Webpack, Parcel, Rollup, esbuild, and Turbo
 
   \item \href{https://turbo.build/pack}{\textbf{Turbopack}} (2022) is a fast Rust bundler that
     supports incremental rebuilds. The project is built by Vercel and is led by the creator of
-    Webpack. It is currently in beta and may be opted-into in Next.JS.
+    Webpack. It is currently in beta and may be opted-into in Next.js.
 \end{enumerate}
 
 It is possible to skip the bundling step if you have very few modules or have very low network
@@ -161,7 +161,7 @@ After code splitting, the filesize of each bundle is greatly reduced, but additi
 trips are now necessary, potentially re-introducing the waterfall problem. Code splitting is a
 tradeoff.
 
-The filesystem router, popularized by Next.JS, optimizes the code splitting tradeoff. Next.JS
+The filesystem router, popularized by Next.js, optimizes the code splitting tradeoff. Next.js
 creates separate bundles per page, only including the code imported by that page in its bundles.
 Loading a page preloads all bundles used by that page in parallel. This optimizes bundle size
 without re-introducing the waterfall problem. The filesystem router achieves this by creating one
@@ -242,7 +242,7 @@ example, of the five bundlers listed above, which should you pick?
 
 Meta-frameworks provide a curated set of already selected packages, including build tools, that
 synergize and enable specialized application paradigms. For example,
-\href{https://nextjs.org}{\textbf{Next.JS}} specializes in Server-Side Rendering (SSR) and
+\href{https://nextjs.org}{\textbf{Next.js}} specializes in Server-Side Rendering (SSR) and
 \href{https://remix.run}{\textbf{Remix}} specializes in progressive enhancement.
 
 Meta-frameworks typically provide a preconfigured build system, removing the need for you to stitch
@@ -286,8 +286,8 @@ preserves the client-side state of unchanged modules and reduces the latency bet
 updated application.
 
 However, each code change triggers the rebuild of all the bundles that import it. This has a linear
-time complexity relative to application size. Hence, in large applications, Hot Module Replacement
-can become slow due to the growing rebundling cost.
+time complexity relative to bundle size. Hence, in large applications, Hot Module Replacement can
+become slow due to the growing rebundling cost.
 
 The \href{https://vitejs.dev/guide/why.html}{no-bundle paradigm}, currently championed by Vite,
 counters this by choosing to not bundle the development server. Instead, Vite serves ESM modules,
@@ -313,7 +313,7 @@ frontend is one of the hardest ecosystems to completely integrate with these too
 currently little prior art.
 
 Fortunately, there exist several monorepo tools designed specifically for frontend. Unfortunately,
-they lack the flexibility and robustness of Bazel et al, most notably hermetic execution.
+they lack the flexibility and robustness of Bazel et al., most notably hermetic execution.
 
 The frontend-specific monorepo tools in common use today are \href{https://nx.dev/}{\textbf{Nx}} and
 \href{https://turbo.build/repo}{\textbf{Turborepo}}. Nx is more mature and featureful, while
@@ -328,7 +328,7 @@ terribly slow in 2019, but modern tools have greatly sped it up. However, modern
 feature sets and are sometimes incompatible with libraries, so legacy codebases often cannot easily
 switch to them.
 
-Server-Side Rendering (SSR) has become more popular after the rise of Next.JS. SSR does not
+Server-Side Rendering (SSR) has become more popular after the rise of Next.js. SSR does not
 introduce any fundamental differences to frontend build systems. SSR applications must also serve
 JavaScript to the browser, and they thus execute the same build steps.
 
