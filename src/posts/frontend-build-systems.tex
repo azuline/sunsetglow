@@ -1,8 +1,10 @@
 \documentclass{article}
 \usepackage{enumitem}
+\usepackage{hyperref}
 \newcommand{\ti}{\textit}
 \newcommand{\tb}{\textbf}
 \newcommand{\tc}{\texttt}
+\newcommand{\hl}{\hyperlink}
 \title{Frontend Build Systems}
 \begin{document}
 
@@ -63,8 +65,8 @@ transpiled to JavaScript.
 \href{https://wiki.commonjs.org/wiki/Modules}{CommonJS modules} (CJS) must also be transpiled to a
 browser-compatible module system. After browsers added widespread support for
 \href{https://exploringjs.com/es6/ch_modules.html}{ES6 Modules} (ESM) in 2018, transpilation to ESM
-has generally been recommended. ESM is furthermore easier to optimize and tree-shake since its
-imports and exports are statically defined.
+has generally been recommended. ESM is furthermore easier to optimize and
+\l{tree-shaking}{tree-shake} since its imports and exports are statically defined.
 
 The transpilers in common use today are Babel, SWC, and TypeScript Compiler.
 
@@ -117,39 +119,42 @@ The bundlers in common use today are Webpack, Parcel, Rollup, esbuild, and Turbo
 
     Loaders also allowed developers to transparently import static assets inside JavaScript files,
     combining all source files and static assets into a single dependency graph. With Gulp, each
-    type of static asset had to be built as a separate task. Webpack also supported code splitting
-    out of the box, simplifying its setup and configuration.
+    type of static asset had to be built as a separate task. Webpack also supported
+    \hl{code-splitting}{code splitting} out of the box, simplifying its setup and configuration.
 
     Webpack is slow and single-threaded, written in JavaScript. It is highly configurable, but its
     many configuration options can be confusing.
 
   \item \href{https://rollupjs.org/}{\tb{Rollup}} (2016) capitalized on the widespread browser
-    support of ES6 Modules and the optimizations it enabled, namely tree shaking. It produced far
-    smaller bundle sizes than Webpack, leading Webpack to later adopt similar optimizations. Rollup
-    is a single-threaded bundler written in JavaScript, only slightly more performant than Webpack.
+    support of ES6 Modules and the optimizations it enabled, namely \hl{tree-shaking}{tree shaking}.
+    It produced far smaller bundle sizes than Webpack, leading Webpack to later adopt similar
+    optimizations. Rollup is a single-threaded bundler written in JavaScript, only slightly more
+    performant than Webpack.
 
   \item \href{https://parceljs.org/}{\tb{Parcel}} (2018) is a low-configuration bundler designed to
     ``just work'' out of the box, providing sensible default configurations for all steps of the
-    build process and developer tooling needs. Parcel 2 uses SWC under the hood. It is much faster
-    than Webpack and Rollup.
+    build process and developer tooling needs. It is multithreaded and much faster than Webpack and
+    Rollup. Parcel 2 uses SWC under the hood.
 
   \item \href{https://esbuild.github.io/}{\tb{Esbuild}} (2020) is a bundler architected for
-    parallelism and optimal performance. It is dozens of times more performant than Webpack, Rollup,
-    and Parcel 2. Esbuild implements a basic transpiler as well as a minifier. However, it is less
-    featureful than the other bundlers, providing a limited plugin API that cannot directly modify
-    the AST. Instead of modifying source files with an esbuild plugin, the files can be transformed
-    prior to being passed to esbuild.
+    parallelism and optimal performance, written in Go. It is dozens of times more performant than
+    Webpack, Rollup, and Parcel. Esbuild implements a basic transpiler as well as a minifier.
+    However, it is less featureful than the other bundlers, providing a limited plugin API that
+    cannot directly modify the AST. Instead of modifying source files with an esbuild plugin, the
+    files can be transformed prior to being passed to esbuild.
 
   \item \href{https://turbo.build/pack}{\tb{Turbopack}} (2022) is a fast Rust bundler that supports
     incremental rebuilds. The project is built by Vercel and led by the creator of Webpack. It is
     currently in beta and may be opted-into in Next.js.
 \end{enumerate}
 
-It is possible to skip the bundling step if you have very few modules or have very low network
+It is reasonable to skip the bundling step if you have very few modules or have very low network
 latency (e.g. on localhost). Several development servers also choose not to bundle modules for the
 development server.
 
+\hypertarget{code-splitting}{
 \subsubsection{Code Splitting}
+}
 
 By default, a client side React application is transformed into a single bundle. For large
 applications with many pages and features, the bundle can be very large, negating the original
@@ -171,7 +176,9 @@ without re-introducing the waterfall problem. The filesystem router achieves thi
 entry point per page (\tc{pages/**/*.jsx}), as opposed to the single entry point of traditional
 client side React apps (\tc{index.jsx}).
 
+\hypertarget{tree-shaking}{
 \subsubsection{Tree Shaking}
+}
 
 A bundle is composed of multiple modules, each of which contains one or more exports. Often, a given
 bundle will only make use of a subset of exports from the modules it imports. The bundler can remove
@@ -196,7 +203,7 @@ analysis is made more challenging. Two primary factors influence the efficiency 
 Static assets, such as CSS, images, and fonts, are typically added to the distributable in the
 bundling step. They may also be optimized for filesize in the minification step.
 
-Prior to Webpack, static assets were built separately from the source code in the build pipeline, in
+Prior to Webpack, static assets were built separately from the source code in the build pipeline as
 an independent build task. To load the static assets, the application had to reference them by their
 final path in the distributable. Thus, it was common to carefully organize assets around a URL
 convention (e.g. \tc{/assets/css/banner.jpg} and \texttt{/assets/fonts/Inter.woff2}).
@@ -204,8 +211,8 @@ convention (e.g. \tc{/assets/css/banner.jpg} and \texttt{/assets/fonts/Inter.wof
 Webpack ``loaders'' allowed the importing of static assets from JavaScript, unifying both code and
 static assets into a single dependency graph. During bundling, Webpack replaces the static asset
 import with its final path inside the distributable. This feature enabled static assets to be
-organized with its associated components in the source code, and created new possibilities for
-static analysis, such as detecting non-existent assets.
+organized with its associated components in the source code and created new possibilities for static
+analysis, such as detecting non-existent assets.
 
 It is important to recognize that the importing of static assets
 (non-JavaScript-or-transpiles-to-JavaScript files) is not part of the JavaScript language. It

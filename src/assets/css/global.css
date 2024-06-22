@@ -6,7 +6,6 @@
   margin: 0;
 }
 body {
-  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   isolation: isolate;
 }
@@ -158,17 +157,25 @@ html {
   --font-size-lg: 1.5rem;
   --font-size-md: 1.25rem;
   --font-size-sm: 1rem;
-  --font-size-xs: .75rem;
+  --font-size-xs: .875rem;
 
   /* Defaults. */
   font-family: "Roboto";
   font-weight: normal;
   font-size: 16px;
   background: var(--color-bg-base);
+  line-height: 1.5;
 }
 
 /* Global application of variables. */
-code, pre { font-family: "IBM Plex Mono" }
+code, pre {
+  font-family: "IBM Plex Mono";
+  font-size: .92rem;
+}
+code {
+  padding-left: .125rem;
+  padding-right: .125rem;
+}
 
 /* Utility classes below. */
 

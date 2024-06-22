@@ -66,14 +66,10 @@
 }
 
 .pandoc blockquote {
-  margin: 0 24px 8px 24px;
+  margin: .5rem 1.5rem;
   line-height: 1.25;
   font-size: var(--font-size-xs);
-  border-left: 2px solid #ddd;
-  color: #474747;
-}
-.pandoc blockquote > p {
-  padding: 2px 0 4px 12px;
+  color: var(--color-fg-secondary);
 }
 
 .pandoc ol,
@@ -85,4 +81,8 @@
 .pandoc #TOC p
 {
   padding-bottom: 0;
+}
+
+.pandoc a[href^="#"] {
+  color: var(--color-fg-primary);
 }
