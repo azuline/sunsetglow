@@ -14,6 +14,11 @@ os.chdir(p)
 
 PORT = 27771
 Handler = http.server.SimpleHTTPRequestHandler
-with socketserver.TCPServer(("", PORT), Handler) as httpd:
-    print(f"Serving build on http://localhost:{PORT}")
-    httpd.serve_forever()
+while True:
+    try:
+        with socketserver.TCPServer(("", PORT), Handler) as httpd:
+            print(f"Serving build on http://localhost:{PORT}")
+            httpd.serve_forever()
+        break
+    except OSError:
+        PORT += 1
