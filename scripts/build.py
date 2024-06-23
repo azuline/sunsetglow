@@ -17,8 +17,9 @@ from xml.etree.ElementTree import Element, SubElement, ElementTree
 import jinja2  # type: ignore
 import pytz  # type: ignore
 
+PROJECT_DIR = os.environ["PROJECT_ROOT"]
 
-je = jinja2.Environment()
+je = jinja2.Environment(loader=jinja2.FileSystemLoader(f"{PROJECT_DIR}/src"))
 
 
 # DATA
@@ -165,7 +166,7 @@ def compile_feed(posts: PostIndex):
 
 
 def main():
-    os.chdir(os.environ["PROJECT_ROOT"])
+    os.chdir(PROJECT_DIR)
 
     with Path("src/posts/index.json").open("r") as fp:
         posts = {k: PostMeta.parse(v) for k, v in json.load(fp).items()}
