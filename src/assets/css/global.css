@@ -24,6 +24,9 @@ p, h1, h2, h3, h4, h5, h6 {
 h1, h2, h3, h4, h5, h6 {
   font-weight: inherit;
 }
+ol, ul {
+  padding-left: 2.5rem;
+}
 
 /* Fonts */
 @font-face {
@@ -145,11 +148,12 @@ h1, h2, h3, h4, h5, h6 {
 
 html {
   /* Color variables. */
-  --color-bg-base: #f7f6f4;
-  --color-bg-nested: #f4f1ec;
+  --color-bg-base: #f6f5f4;
+  --color-bg-nested: #f5f3ef;
   --color-fg-primary: #322107;
-  --color-fg-secondary: #6b512b;
-  --color-border: #ece8e2;
+  --color-fg-secondary: #605b53;
+  --color-border-primary: #c5b194;
+  --color-border-secondary: #ece8e2;
 
   /* Font Variables */
   --font-size-xxl: 2.25rem;
@@ -208,6 +212,9 @@ code {
 .decoration-none { text-decoration: none }
 .decoration-underline { text-decoration: underline }
 
+/* Tabular nums. */
+.tabular-nums { font-variant-numeric: tabular-nums }
+
 /* Background color. */
 .bg-base { background: var(--color-bg-base) }
 .bg-nested { background: var(--color-bg-nested) }
@@ -217,7 +224,14 @@ code {
 .fg-secondary { color: var(--color-fg-secondary) }
 
 /* Border color. */
-.border { color: var(--color-border) }
+.br-primary { color: var(--color-border-primary) }
+.br-secondary { color: var(--color-border-secondary) }
+
+/* Border. */
+.br-top { border-top-width: 1px; border-top-style: solid }
+.br-right { border-right-width: 1px; border-right-style: solid }
+.br-bottom { border-bottom-width: 1px; border-bottom-style: solid }
+.br-left { border-left-width: 1px; border-left-style: solid }
 
 /* Flex. */
 .flex { display: flex }
@@ -241,6 +255,7 @@ code {
 .p-4 { padding: 1rem }
 .p-6 { padding: 1.5rem }
 .p-8 { padding: 2rem }
+.p-10 { padding: 2.5rem }
 .p-12 { padding: 3rem }
 .p-16 { padding: 4rem }
 .px-1 { padding-left: .25rem; padding-right: .25rem }
@@ -248,6 +263,7 @@ code {
 .px-4 { padding-left: 1rem; padding-right: 1rem }
 .px-6 { padding-left: 1.5rem; padding-right: 1.5rem }
 .px-8 { padding-left: 2rem; padding-right: 2rem }
+.px-10 { padding-left: 2.5rem; padding-right: 2.5rem }
 .px-12 { padding-left: 3rem; padding-right: 3rem }
 .px-16 { padding-left: 4rem; padding-right: 4rem }
 .py-1 { padding-top: .25rem; padding-bottom: .25rem }
@@ -255,6 +271,7 @@ code {
 .py-4 { padding-top: 1rem; padding-bottom: 1rem }
 .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem }
 .py-8 { padding-top: 2rem; padding-bottom: 2rem }
+.py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem }
 .py-12 { padding-top: 3rem; padding-bottom: 3rem }
 .py-16 { padding-top: 4rem; padding-bottom: 4rem }
 .pl-1 { padding-left: .25rem }
@@ -262,6 +279,7 @@ code {
 .pl-4 { padding-left: 1rem }
 .pl-6 { padding-left: 1.5rem }
 .pl-8 { padding-left: 2rem }
+.pl-10 { padding-left: 2.5rem }
 .pl-12 { padding-left: 3rem }
 .pl-16 { padding-left: 4rem }
 .pt-1 { padding-top: .25rem }
@@ -269,6 +287,7 @@ code {
 .pt-4 { padding-top: 1rem }
 .pt-6 { padding-top: 1.5rem }
 .pt-8 { padding-top: 2rem }
+.pt-10 { padding-top: 2.5rem }
 .pt-12 { padding-top: 3rem }
 .pt-16 { padding-top: 4rem }
 .pr-1 { padding-right: .25rem }
@@ -276,6 +295,7 @@ code {
 .pr-4 { padding-right: 1rem }
 .pr-6 { padding-right: 1.5rem }
 .pr-8 { padding-right: 2rem }
+.pr-10 { padding-right: 2.5rem }
 .pr-12 { padding-right: 3rem }
 .pr-16 { padding-right: 4rem }
 .pb-1 { padding-bottom: .25rem }
@@ -283,6 +303,7 @@ code {
 .pb-4 { padding-bottom: 1rem }
 .pb-6 { padding-bottom: 1.5rem }
 .pb-8 { padding-bottom: 2rem }
+.pb-10 { padding-bottom: 2.5rem }
 .pb-12 { padding-bottom: 3rem }
 .pb-16 { padding-bottom: 4rem }
 
