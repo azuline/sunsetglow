@@ -26,6 +26,7 @@
         };
         py = pkgs.python311.withPackages (ps: with ps; [
           jinja2
+          pytz
         ]);
         shellHook = ''
           find-up () {
