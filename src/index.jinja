@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/global.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/index.css" />
+    <title>sunset glow</title>
+  </head>
+  <body>
+    <div class="flex flex-col gap-2 p-4">
+      <div>sunset glow</div>
+      <div class="flex flex-col gap-1">
+        <div class="bold">About:</div>
+        <ul>
+          <li>I like theology, history, and computing.</li>
+          <li>Open to emails and DMs :)</li>
+        </ul>
+      </div>
+      <div class="flex flex-col gap-1">
+        <div class="bold">Find Me:</div>
+        <ul>
+          <li><a href="mailto:blissful@sunsetglow.net">blissful@sunsetglow.net</a></li>
+          <li><a href="https://github.com/azuline">github/azuline</a></li>
+          <li><a href="https://x.com/hiddenwaterways">twitter/hiddenwaterways</a></li>
+        </ul>
+      </div>
+      <div class="flex flex-col gap-1">
+        <div class="bold">Writing:</div>
+        <ul>
+        {% for slug, post in posts.items() %}
+          <li><span class="tabular-nums">{{ post.date }}</span> | <a href="/posts/{{ slug }}.html">{{ post.title }}</a></li>
+        {% endfor %}
+        </ul>
+      </div>
+      <div class="flex flex-col gap-1">
+        <div class="bold">Software:</div>
+        <ul>
+          <li><a href="https://github.com/azuline/rose">Rosé</a>, a music management library with with CLI and virtual filesystem frontends.</li>
+        </ul>
+      </div>
+      <div>
+        <a href="https://github.com/azuline/sunsetglow" class="text-xs fg-secondary">(source)</a>
+      </div>
+    </div>
+  </body>
+</html>
+

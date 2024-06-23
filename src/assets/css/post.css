@@ -6,15 +6,16 @@
 .pandoc #TOC {
   padding: 1rem;
   margin-bottom: 1.5rem;
-  background: var(--color-bg-nested);
-  border: 2px solid var(--color-border);
+  /* background: var(--color-bg-nested); */
+  border-left: 2px solid var(--color-border-primary);
 }
 .pandoc #TOC ul,
 .pandoc #TOC li {
   list-style-type: none;
+  padding-bottom: 0;
 }
 .pandoc #TOC ul {
-  padding-left: 0;
+  padding-left: .5rem;
 }
 .pandoc #TOC li > ul {
   padding-left: 1.25rem;
@@ -70,13 +71,6 @@
   line-height: 1.25;
   font-size: var(--font-size-xs);
   color: var(--color-fg-secondary);
-}
-
-.pandoc #TOC ol,
-.pandoc #TOC ul,
-.pandoc #TOC p
-{
-  padding-bottom: 0;
 }
 
 .pandoc a[href^="#"] {

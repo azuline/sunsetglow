@@ -1,6 +1,7 @@
 {
   "frontend-build-systems": {
     "title": "Exposition of Frontend Build Systems",
-    "date": "2024-06-08"
+    "date": "2024-06-08",
+    "public": true
   }
 }

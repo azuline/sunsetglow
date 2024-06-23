@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
 import json
 import os
 import shutil
@@ -7,6 +8,8 @@ import subprocess
 import tempfile
 from datetime import datetime
 from pathlib import Path
+import dataclasses
+from typing import Any
 
 import jinja2  # type: ignore
 
@@ -19,6 +22,24 @@ def formatdate(x: str) -> str:
 
 je = jinja2.Environment()
 je.filters["formatdate"] = formatdate
+
+
+@dataclasses.dataclass
+class PostMeta:
+    title: str
+    date: str
+    public: bool
+
+    @classmethod
+    def parse(cls, d: dict[str, Any]) -> PostMeta:
+        return cls(
+            title=d["title"],
+            date=d["date"],
+            public=d["public"],
+        )
+
+
+PostIndex = dict[str, PostMeta]
 
 
 def empty_dist() -> None:
@@ -38,13 +59,27 @@ def empty_dist() -> None:
             raise Exception(f"{f} is not a file or directory.")
 
 
-def compile_posts():
+def compile_index(posts: PostIndex):
+    with Path("src/index.jinja").open("r") as fp:
+        tpl = je.from_string(fp.read())
+
+    # Write the main index.html
+    publicposts = {k: v for k, v in posts.items() if v.public}
+    index = tpl.render(posts=publicposts)
+    with Path("dist/index.html").open("w") as fp:
+        fp.write(index)
+
+    # Write a staging index.html
+    staging = tpl.render(posts=posts)
+    with Path("dist/staging.html").open("w") as fp:
+        fp.write(staging)
+
+
+def compile_posts(posts: PostIndex):
     Path("dist/posts").mkdir()
     with Path("src/posts/template.jinja").open("r") as fp:
         tpl = je.from_string(fp.read())
-    with Path("src/posts/index.json").open("r") as fp:
-        meta = json.load(fp)
-    for f in Path("src/posts").iterdir():
+    for f in Path("src/posts/tex").iterdir():
         if not f.suffix == ".tex":
             continue
 
@@ -74,21 +109,25 @@ def compile_posts():
         post = post[:nav_end] + '<div id="POST">' + post[nav_end:] + "</div>"
 
         # Wrap the post with a Jinja template.
-        postmeta = meta[f.stem]
-        post = tpl.render(meta=postmeta, body=post)
+        slug = f.stem
+        meta = posts[slug]
+        post = tpl.render(slug=slug, meta=meta, body=post)
 
         # Write the compiled post.
-        with Path("dist", *f.parts[1:]).with_suffix(".html").open("w") as fp:
+        with Path("dist/posts", f.parts[-1]).with_suffix(".html").open("w") as fp:
             fp.write(post)
 
 
 def main():
     os.chdir(os.environ["PROJECT_ROOT"])
 
+    with Path("src/posts/index.json").open("r") as fp:
+        posts = {k: PostMeta.parse(v) for k, v in json.load(fp).items()}
+
     empty_dist()
     shutil.copytree("src/assets", "dist/assets")
-    shutil.copyfile("src/index.html", "dist/index.html")
-    compile_posts()
+    compile_index(posts)
+    compile_posts(posts)
 
 
 if __name__ == "__main__":
