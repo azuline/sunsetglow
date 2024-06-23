@@ -145,11 +145,11 @@ h1, h2, h3, h4, h5, h6 {
 
 html {
   /* Color variables. */
-  --color-bg-base: #fafcfc;
-  --color-bg-nested: #f5f9f9;
-  --color-fg-primary: #071515;
-  --color-fg-secondary: #313938;
-  --color-border: #cbddd8;
+  --color-bg-base: #f7f6f4;
+  --color-bg-nested: #f4f1ec;
+  --color-fg-primary: #322107;
+  --color-fg-secondary: #6b512b;
+  --color-border: #ece8e2;
 
   /* Font Variables */
   --font-size-xxl: 2.25rem;

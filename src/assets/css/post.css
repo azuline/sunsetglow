@@ -72,10 +72,6 @@
   color: var(--color-fg-secondary);
 }
 
-.pandoc ol,
-.pandoc ul {
-  padding-bottom: .5rem;
-}
 .pandoc #TOC ol,
 .pandoc #TOC ul,
 .pandoc #TOC p
