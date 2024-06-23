@@ -1,45 +1,64 @@
 #!/usr/bin/env python3
 
 from __future__ import annotations
+
 import json
 import os
 import shutil
 import subprocess
 import tempfile
+import dataclasses
+
 from datetime import datetime
 from pathlib import Path
-import dataclasses
 from typing import Any
+from xml.etree.ElementTree import Element, SubElement, ElementTree
 
 import jinja2  # type: ignore
-
-
-def formatdate(x: str) -> str:
-    """Convert 2024/06/08 to June 8, 2024"""
-    dt = datetime.strptime(x, "%Y-%m-%d")
-    return dt.strftime("%B %-d, %Y")
+import pytz  # type: ignore
 
 
 je = jinja2.Environment()
-je.filters["formatdate"] = formatdate
+
+
+# DATA
 
 
 @dataclasses.dataclass
 class PostMeta:
     title: str
-    date: str
+    timestamp: datetime
     public: bool
 
     @classmethod
     def parse(cls, d: dict[str, Any]) -> PostMeta:
         return cls(
             title=d["title"],
-            date=d["date"],
+            timestamp=datetime.fromisoformat(d["timestamp"]),
             public=d["public"],
         )
 
 
 PostIndex = dict[str, PostMeta]
+
+
+# UTILS
+
+
+def site_updated_at() -> datetime:
+    r = subprocess.run(["git", "log", "-1", "--format=%cI"], capture_output=True, text=True)
+    text = r.stdout.strip()
+    return datetime.fromisoformat(text).astimezone(pytz.utc)
+
+
+def article_updated_at(slug: str) -> datetime:
+    p = f"src/posts/tex/{slug}.tex"
+    r = subprocess.run(["git", "log", "-1", "--format=%cI", p], capture_output=True, text=True)
+    text = r.stdout.strip()
+    return datetime.fromisoformat(text).astimezone(pytz.utc)
+
+
+# BUILD STEPS
 
 
 def empty_dist() -> None:
@@ -118,6 +137,30 @@ def compile_posts(posts: PostIndex):
             fp.write(post)
 
 
+def compile_feed(posts: PostIndex):
+    # fmt: off
+    feed = Element("feed", xmlns="http://www.w3.org/2005/Atom")
+    SubElement(feed, "title").text = "sunsetglow"
+    SubElement(feed, "link", href="https://sunsetglow.net/atom.xml", rel="self", type="application/atom+xml")
+    SubElement(feed, "link", href="https://sunsetglow.net/", rel="alternate", type="text/html")
+    SubElement(feed, "updated").text = site_updated_at().isoformat()
+    SubElement(feed, "id").text = "tag:sunsetglow.net,2024:site"
+
+    for slug, meta in posts.items():
+        post = SubElement(feed, "entry")
+        SubElement(post, "id").text = f"tag:sunsetglow.net,{meta.timestamp.isoformat()}:{slug}"
+        SubElement(post, "link", type="text/html").text = f"https://sunsetglow.net/posts/{slug}.html"
+        SubElement(post, "author").text = "aaaaaaaa"
+        SubElement(post, "title").text = meta.title
+        SubElement(post, "published").text = meta.timestamp.isoformat()
+        SubElement(post, "updated").text = article_updated_at(slug).isoformat()
+    # fmt: on
+
+    tree = ElementTree(feed)
+    with open("dist/atom.xml", "wb") as fh:
+        tree.write(fh, encoding="utf-8", xml_declaration=True)
+
+
 def main():
     os.chdir(os.environ["PROJECT_ROOT"])
 
@@ -128,6 +171,7 @@ def main():
     shutil.copytree("src/assets", "dist/assets")
     compile_index(posts)
     compile_posts(posts)
+    compile_feed(posts)
 
 
 if __name__ == "__main__":
