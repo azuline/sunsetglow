@@ -112,12 +112,12 @@ single round trip network request.
 The bundlers in common use today are Webpack, Parcel, Rollup, esbuild, and Turbopack.
 
 \begin{enumerate}
-  \item \href{https://webpack.js.org/}{\tb{Webpack}} (2014) started gaining significant popularity
-    around 2016, later becoming the standard bundler. Unlike the then-incumbent Browserify, which
-    was commonly used with the Gulp task runner, Webpack pioneered ``loaders'' that transformed
-    source files upon import, allowing Webpack to orchestrate the entire build pipeline.
+  \item \href{https://webpack.js.org/}{\tb{Webpack}} (2014) gained significant popularity around
+    2016, later becoming the standard bundler. Unlike the then-incumbent Browserify, which was
+    commonly used with the Gulp task runner, Webpack pioneered ``loaders'' that transformed source
+    files upon import, allowing Webpack to orchestrate the entire build pipeline.
 
-    Loaders also allowed developers to transparently import static assets inside JavaScript files,
+    Loaders allowed developers to transparently import static assets inside JavaScript files,
     combining all source files and static assets into a single dependency graph. With Gulp, each
     type of static asset had to be built as a separate task. Webpack also supported
     \hl{code-splitting}{code splitting} out of the box, simplifying its setup and configuration.

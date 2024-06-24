@@ -12,7 +12,7 @@
         <div class="py-16" />
         <div class="flex flex-col gap-4">
           <div class="display text-xxl medium">{{ meta.title }}</div>
-          <div class="display text-sm fg-secondary italic">{{ meta.timestamp.strftime("%B %-d, %Y") }}</div>
+          <div class="display text-sm italic">{{ meta.timestamp.strftime("%B %-d, %Y") }}</div>
         </div>
         <div class="pb-8 w-full"></div>
         <div class="pandoc">
@@ -21,9 +21,14 @@
         <div class="py-8">
           <div class="br-top br-secondary"></div>
         </div>
-        <div class="text-xs fg-secondary">
-          <a href="https://github.com/azuline/sunsetglow/blob/master/src/posts/tex/{{ slug }}.tex" class="fg-secondary">Source</a>
-          | Found an error or typo? PRs welcome!
+        <div class="flex justify-between">
+          <div class="text-xs fg-secondary">
+            <a href="https://github.com/azuline/sunsetglow/blob/master/src/posts/tex/{{ slug }}.tex" class="fg-secondary">Source</a>
+            | Found an error or typo? PRs welcome!
+          </div>
+          <div class="text-xs fg-secondary">
+            <a href="https://sunsetglow.net/atom.xml" class="fg-secondary">Feed</a>
+          </div>
         </div>
       </div>
     </div>

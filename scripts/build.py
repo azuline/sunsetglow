@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 import json
 import os
 import shutil
@@ -27,17 +28,31 @@ je = jinja2.Environment(loader=jinja2.FileSystemLoader(f"{PROJECT_DIR}/src"))
 
 @dataclasses.dataclass
 class PostMeta:
+    slug: str
     title: str
     timestamp: datetime
     public: bool
 
     @classmethod
-    def parse(cls, d: dict[str, Any]) -> PostMeta:
+    def parse(cls, slug: str, d: dict[str, Any]) -> PostMeta:
         return cls(
+            slug=slug,
             title=d["title"],
             timestamp=datetime.fromisoformat(d["timestamp"]),
             public=d["public"],
         )
+
+    @functools.cached_property
+    def lastupdated(self) -> datetime | None:
+        p = f"src/posts/tex/{self.slug}.tex"
+        r = subprocess.run(["git", "log", "-1", "--format=%cI", p], capture_output=True, text=True)
+        text = r.stdout.strip()
+        if not text:
+            return None
+        lastupdated = datetime.fromisoformat(text).astimezone(pytz.utc)
+        if lastupdated.date() == self.timestamp.date():
+            return None
+        return lastupdated
 
 
 PostIndex = dict[str, PostMeta]
@@ -48,13 +63,6 @@ PostIndex = dict[str, PostMeta]
 
 def site_updated_at() -> datetime:
     r = subprocess.run(["git", "log", "-1", "--format=%cI"], capture_output=True, text=True)
-    text = r.stdout.strip()
-    return datetime.fromisoformat(text).astimezone(pytz.utc)
-
-
-def article_updated_at(slug: str) -> datetime:
-    p = f"src/posts/tex/{slug}.tex"
-    r = subprocess.run(["git", "log", "-1", "--format=%cI", p], capture_output=True, text=True)
     text = r.stdout.strip()
     return datetime.fromisoformat(text).astimezone(pytz.utc)
 
@@ -84,13 +92,13 @@ def compile_index(posts: PostIndex):
         tpl = je.from_string(fp.read())
 
     # Write the main index.html
-    publicposts = {k: v for k, v in posts.items() if v.public}
+    publicposts = {k: v for k, v in reversed(posts.items()) if v.public}
     index = tpl.render(posts=publicposts)
     with Path("dist/index.html").open("w") as fp:
         fp.write(index)
 
     # Write a staging index.html
-    staging = tpl.render(posts=posts)
+    staging = tpl.render(posts=dict(reversed(posts.items())))
     with Path("dist/staging.html").open("w") as fp:
         fp.write(staging)
 
@@ -153,7 +161,7 @@ def compile_feed(posts: PostIndex):
         SubElement(post, "link", href=f"https://sunsetglow.net/posts/{slug}.html", type="text/html")
         SubElement(post, "title").text = meta.title
         SubElement(post, "published").text = meta.timestamp.isoformat()
-        SubElement(post, "updated").text = article_updated_at(slug).isoformat()
+        SubElement(post, "updated").text = (meta.lastupdated or meta.timestamp).isoformat()
 
         author = SubElement(post, "author")
         SubElement(author, "name").text = "blissful"
@@ -169,7 +177,7 @@ def main():
     os.chdir(PROJECT_DIR)
 
     with Path("src/posts/index.json").open("r") as fp:
-        posts = {k: PostMeta.parse(v) for k, v in json.load(fp).items()}
+        posts = {k: PostMeta.parse(k, v) for k, v in json.load(fp).items()}
 
     empty_dist()
     shutil.copytree("src/assets", "dist/assets")

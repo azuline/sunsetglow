@@ -58,7 +58,9 @@
   padding-bottom: .75rem;
 }
 
-.pandoc p {
+.pandoc p,
+.pandoc pre,
+.pandoc blockquote {
   padding-bottom: .5rem;
 }
 
@@ -66,8 +68,14 @@
   font-size: var(--font-size-xs);
 }
 
+.pandoc pre,
+.pandoc pre code {
+  padding-bottom: .5rem;
+  font-size: var(--font-size-xs);
+}
+
 .pandoc blockquote {
-  margin: .5rem 1.5rem;
+  margin: 0 1.5rem;
   line-height: 1.25;
   font-size: var(--font-size-xs);
   color: var(--color-fg-secondary);
