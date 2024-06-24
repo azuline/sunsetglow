@@ -45,7 +45,12 @@ class PostMeta:
     @functools.cached_property
     def lastupdated(self) -> datetime | None:
         p = f"src/posts/tex/{self.slug}.tex"
-        r = subprocess.run(["git", "log", "-1", "--format=%cI", p], capture_output=True, text=True)
+        r = subprocess.run(
+            ["git", "log", "-1", "--format=%cI", p],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
         text = r.stdout.strip()
         if not text:
             return None
@@ -62,7 +67,12 @@ PostIndex = dict[str, PostMeta]
 
 
 def site_updated_at() -> datetime:
-    r = subprocess.run(["git", "log", "-1", "--format=%cI"], capture_output=True, text=True)
+    r = subprocess.run(
+        ["git", "log", "-1", "--format=%cI"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
     text = r.stdout.strip()
     return datetime.fromisoformat(text).astimezone(pytz.utc)
 
@@ -87,23 +97,24 @@ def empty_dist() -> None:
             raise Exception(f"{f} is not a file or directory.")
 
 
-def compile_index(posts: PostIndex):
+def compile_index(posts: PostIndex, commit: str):
     with Path("src/index.jinja").open("r") as fp:
         tpl = je.from_string(fp.read())
 
     # Write the main index.html
     publicposts = {k: v for k, v in reversed(posts.items()) if v.public}
-    index = tpl.render(posts=publicposts)
+    index = tpl.render(posts=publicposts, commit=commit)
     with Path("dist/index.html").open("w") as fp:
         fp.write(index)
 
     # Write a staging index.html
-    staging = tpl.render(posts=dict(reversed(posts.items())))
+    stagingposts = dict(reversed(posts.items()))
+    staging = tpl.render(posts=stagingposts, commit=commit)
     with Path("dist/staging.html").open("w") as fp:
         fp.write(staging)
 
 
-def compile_posts(posts: PostIndex):
+def compile_posts(posts: PostIndex, commit: str):
     Path("dist/posts").mkdir()
     with Path("src/posts/template.jinja").open("r") as fp:
         tpl = je.from_string(fp.read())
@@ -139,7 +150,7 @@ def compile_posts(posts: PostIndex):
         # Wrap the post with a Jinja template.
         slug = f.stem
         meta = posts[slug]
-        post = tpl.render(slug=slug, meta=meta, body=post)
+        post = tpl.render(slug=slug, meta=meta, body=post, commit=commit)
 
         # Write the compiled post.
         with Path("dist/posts", f.parts[-1]).with_suffix(".html").open("w") as fp:
@@ -179,10 +190,18 @@ def main():
     with Path("src/posts/index.json").open("r") as fp:
         posts = {k: PostMeta.parse(k, v) for k, v in json.load(fp).items()}
 
+    r = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    commit = r.stdout.strip()
+
     empty_dist()
     shutil.copytree("src/assets", "dist/assets")
-    compile_index(posts)
-    compile_posts(posts)
+    compile_index(posts, commit)
+    compile_posts(posts, commit)
     compile_feed(posts)
 
 
