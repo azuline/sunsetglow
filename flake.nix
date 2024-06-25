@@ -12,6 +12,7 @@
         pkgs = import nixpkgs { inherit system; };
         tex = pkgs.texlive.combine {
           inherit (pkgs.texlive) scheme-small
+            latexmk
             amsmath
             dirtree
             ellipsis

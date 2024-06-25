@@ -111,7 +111,7 @@ def compile_favicons():
 
 
 def compile_index(posts: PostIndex, commit: str):
-    with Path("src/index.jinja").open("r") as fp:
+    with Path("src/index.html.jinja").open("r") as fp:
         tpl = je.from_string(fp.read())
 
     # Write the main index.html
@@ -129,7 +129,7 @@ def compile_index(posts: PostIndex, commit: str):
 
 def compile_posts(posts: PostIndex, commit: str):
     Path("dist/posts").mkdir()
-    with Path("src/posts/template.jinja").open("r") as fp:
+    with Path("src/posts/post.html.jinja").open("r") as fp:
         tpl = je.from_string(fp.read())
     for f in Path("src/posts/tex").iterdir():
         if not f.suffix == ".tex":

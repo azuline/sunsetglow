@@ -3,6 +3,14 @@
   content: ".";
 }
 
+.pandoc a[href^="#"] {
+  color: var(--color-fg-primary);
+}
+
+.column {
+  max-width: 36rem;
+}
+
 .pandoc #TOC {
   padding: 1rem;
   margin-bottom: 1.5rem;
@@ -22,6 +30,32 @@
 }
 .pandoc #TOC a {
   color: var(--color-fg-primary);
+}
+
+@media screen and (min-width: 1200px) {
+  .column {
+    max-width: 62rem;
+  }
+
+  .pandoc {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 4rem;
+  }
+  .pandoc #TOC {
+    flex: 0 0 20rem;
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+  .pandoc #TOC a {
+    color: var(--color-fg-secondary);
+  }
+  .pandoc #POST {
+    flex: 0 0 38rem;
+  }
 }
 
 .pandoc h1,
@@ -79,8 +113,4 @@
   line-height: 1.25;
   font-size: var(--font-size-xs);
   color: var(--color-fg-secondary);
-}
-
-.pandoc a[href^="#"] {
-  color: var(--color-fg-primary);
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {% include "head.jinja" %}
+    {% include "head.html.jinja" %}
     <title>
       {% if meta.fascicle %}
         {{ meta.fascicle.index }}. {{ meta.fascicle.title }} |
@@ -11,8 +11,8 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v={{ commit }}" />
   </head>
   <body>
-    <div class="w-content mx-auto p-8">
-      <div class="max-w-36">
+    <div class="w-content mx-auto py-8 px-6">
+      <div class="column">
         <div class="text-sm label mono"><a class="decoration-none fg-primary" href="/">sunset glow</a></div>
         <div class="py-16" />
         <div class="flex flex-col gap-4">
