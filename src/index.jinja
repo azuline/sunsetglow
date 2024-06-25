@@ -28,8 +28,10 @@
         <ul>
         {% for slug, post in posts.items() %}
           <li>
-            <span class="tabular-nums">{{ post.timestamp.strftime("%Y-%m-%d") }}</span> 
-            | <a href="/posts/{{ slug }}.html">{{ post.title }}</a>
+            <span class="tabular-nums">{{ post.timestamp.strftime("%Y-%m-%d") }}</span> |
+            <a href="/posts/{{ slug }}.html">
+              {{ post.title }}{% if post.fascicle %}, Fascicle {{ post.fascicle.index }}: {{ post.fascicle.title }}{% endif %}
+            </a>
           </li>
         {% endfor %}
         </ul>

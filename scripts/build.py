@@ -27,9 +27,16 @@ je = jinja2.Environment(loader=jinja2.FileSystemLoader(f"{PROJECT_DIR}/src"))
 
 
 @dataclasses.dataclass
+class Fascicle:
+    index: int
+    title: str
+
+
+@dataclasses.dataclass
 class PostMeta:
     slug: str
     title: str
+    fascicle: Fascicle | None
     timestamp: datetime
     public: bool
 
@@ -39,6 +46,7 @@ class PostMeta:
             slug=slug,
             title=d["title"],
             timestamp=datetime.fromisoformat(d["timestamp"]),
+            fascicle=Fascicle(**f) if (f := d.get("fascicle", None)) else None,
             public=d["public"],
         )
 

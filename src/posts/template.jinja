@@ -2,7 +2,12 @@
 <html lang="en">
   <head>
     {% include "head.jinja" %}
-    <title>{{ meta.title }}</title>
+    <title>
+      {% if meta.fascicle %}
+        {{ meta.fascicle.index }}. {{ meta.fascicle.title }} |
+      {% endif %}
+      {{ meta.title }}
+    </title>
     <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v={{ commit }}" />
   </head>
   <body>
@@ -11,8 +16,13 @@
         <div class="text-sm label mono"><a class="decoration-none fg-primary" href="/">sunset glow</a></div>
         <div class="py-16" />
         <div class="flex flex-col gap-4">
-          <div class="display text-xxl medium">{{ meta.title }}</div>
-          <div class="display text-sm italic">{{ meta.timestamp.strftime("%B %-d, %Y") }}</div>
+          <div class="flex flex-col gap-2">
+            <div class="display text-xxl medium">{{ meta.title }}</div>
+            {% if meta.fascicle %}
+            <div class="display text-xl">Fascicle {{ meta.fascicle.index }}: {{ meta.fascicle.title }}</div>
+            {% endif %}
+          </div>
+          <div class="display text-sm fg-secondary italic">{{ meta.timestamp.strftime("%B %-d, %Y") }}</div>
         </div>
         <div class="pb-8 w-full"></div>
         <div class="pandoc">

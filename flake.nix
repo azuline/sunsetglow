@@ -20,6 +20,7 @@
             etoolbox
             fontspec
             footmisc
+            listings
             setspace
             titlesec
             ;
@@ -36,8 +37,8 @@
             done
             echo "$path"
           }
-
           export PROJECT_ROOT="$(find-up flake.nix)"
+          export TEXINPUTS=":$PROJECT_ROOT/src/posts/tex:"
         '';
       in
       {
