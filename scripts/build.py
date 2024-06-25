@@ -105,6 +105,11 @@ def empty_dist() -> None:
             raise Exception(f"{f} is not a file or directory.")
 
 
+def compile_favicons():
+    for f in Path("src/favicons").iterdir():
+        shutil.copyfile(f, Path("dist", f.name))
+
+
 def compile_index(posts: PostIndex, commit: str):
     with Path("src/index.jinja").open("r") as fp:
         tpl = je.from_string(fp.read())
@@ -208,6 +213,7 @@ def main():
 
     empty_dist()
     shutil.copytree("src/assets", "dist/assets")
+    compile_favicons()
     compile_index(posts, commit)
     compile_posts(posts, commit)
     compile_feed(posts)
