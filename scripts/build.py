@@ -5,6 +5,7 @@ from __future__ import annotations
 import functools
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -159,6 +160,15 @@ def compile_posts(posts: PostIndex, commit: str):
         # Wrap the main article inside a div.
         nav_end = post.find("</nav>") + len("</nav>")
         post = post[:nav_end] + '<div id="POST">' + post[nav_end:] + "</div>"
+        # Add dots after ToC and header section numbers.
+        post = re.sub(r'(-section-number">[^<]*)', r"\1.", post)
+        # Add clickable links to headings.
+        post = re.sub(
+            r'(<h[1-6])(.*?)id="([^"]+)"([^>]*)>(.+?)</h',
+            r'\1\2id="\3"\4><a href="#\3" class="heading">\5</a></h',
+            post,
+            flags=re.MULTILINE | re.DOTALL,
+        )
 
         # Wrap the post with a Jinja template.
         slug = f.stem

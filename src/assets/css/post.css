@@ -1,10 +1,13 @@
-.pandoc .toc-section-number::after,
-.pandoc .header-section-number::after {
-  content: ".";
-}
-
 .pandoc a[href^="#"] {
   color: var(--color-fg-primary);
+}
+.pandoc a[href^="#"].heading {
+  text-decoration: none;
+}
+.pandoc a[href^="#"].heading:hover::after {
+  padding-left: .5rem;
+  content: "#";
+  color: var(--color-detail);
 }
 
 .column {
@@ -29,6 +32,9 @@
   padding-left: 1.25rem;
 }
 .pandoc #TOC a {
+  color: var(--color-fg-primary);
+}
+.pandoc #TOC a.active {
   color: var(--color-fg-primary);
 }
 

@@ -151,9 +151,10 @@ html {
   --color-bg-base: #f6f5f4;
   --color-bg-nested: #f5f3ef;
   --color-fg-primary: #000000;
-  --color-fg-secondary: #464138;
+  --color-fg-secondary: #5c554a;
   --color-border-primary: #c5b194;
   --color-border-secondary: #ece8e2;
+  --color-detail: #a9a39b;
 
   /* Font Variables */
   --font-size-xxl: 2.25rem;
@@ -218,10 +219,12 @@ code {
 /* Background color. */
 .bg-base { background: var(--color-bg-base) }
 .bg-nested { background: var(--color-bg-nested) }
+.bg-detail { background: var(--color-detail) }
 
 /* Foreground color. */
 .fg-primary { color: var(--color-fg-primary) }
 .fg-secondary { color: var(--color-fg-secondary) }
+.fg-detail { color: var(--color-detail) }
 
 /* Border color. */
 .br-primary { color: var(--color-border-primary) }
