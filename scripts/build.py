@@ -190,6 +190,8 @@ def compile_feed(posts: PostIndex):
     SubElement(feed, "id").text = "tag:sunsetglow.net,2024:site"
 
     for slug, meta in posts.items():
+        if not meta.public:
+            continue
         post = SubElement(feed, "entry")
         SubElement(post, "id").text = f"tag:sunsetglow.net,{meta.timestamp.strftime('%Y-%m-%d')}:{slug}"
         SubElement(post, "link", href=f"https://sunsetglow.net/posts/{slug}.html", type="text/html")

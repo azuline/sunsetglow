@@ -19,11 +19,11 @@ jobs:
           name: sunsetglow
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Build Nix
-        run: nix build -j8 .#devShells.x86_64-linux.build
+        run: nix build -j8 .#devShells.x86_64-linux.default
       - name: Build Website
-        run: nix develop .#devShells.x86_64-linux.build --command make build
+        run: nix develop .#devShells.x86_64-linux.default --command make build
       - name: Create Tarball
-        run: nix develop .#devShells.x86_64-linux.build --command bash -c '(cd dist/ && tar -czvf ../sunsetglow.tar.gz *)'
+        run: nix develop .#devShells.x86_64-linux.default --command bash -c '(cd dist/ && tar -czvf ../sunsetglow.tar.gz *)'
       - name: Create release and upload tarball
         id: upload
         run: |
@@ -65,10 +65,10 @@ jobs:
           name: sunsetglow
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Build Nix
-        run: nix build -j8 .#devShells.x86_64-linux.deploy
+        run: nix build -j8 .#packages.x86_64-linux.levant
       - name: Tailscale
         uses: tailscale/github-action@v1
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - name: Deploy
-        run: nix develop .#devShells.x86_64-linux.deploy --command levant deploy -log-level=debug -var "artifact_source_url=$ARTIFACT_SOURCE_URL" deploy.nomad
+        run: nix run .#packages.x86_64-linux.levant deploy -log-level=debug -var "artifact_source_url=$ARTIFACT_SOURCE_URL" deploy.nomad
