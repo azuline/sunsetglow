@@ -50,7 +50,7 @@
               (pkgs.buildEnv {
                 name = "sg-build";
                 paths = with pkgs; [
-                  bash
+                  bashInteractive
                   coreutils
                   moreutils
                   findutils
@@ -68,7 +68,7 @@
               (pkgs.buildEnv {
                 name = "sg-deploy";
                 paths = with pkgs; [
-                  bash
+                  bashInteractive
                   coreutils
                   moreutils
                   findutils
@@ -83,7 +83,7 @@
               (pkgs.buildEnv {
                 name = "sg-dev";
                 paths = with pkgs; [
-                  bash
+                  bashInteractive
                   coreutils
                   moreutils
                   findutils
