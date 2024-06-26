@@ -43,58 +43,28 @@
         '';
       in
       {
-        devShells = {
-          build = pkgs.mkShell {
-            inherit shellHook;
-            buildInputs = [
-              (pkgs.buildEnv {
-                name = "sg-build";
-                paths = with pkgs; [
-                  bashInteractive
-                  coreutils
-                  moreutils
-                  findutils
-                  curl
-                  pandoc
-                  py
-                  tex
-                ];
-              })
-            ];
-          };
-          deploy = pkgs.mkShell {
-            inherit shellHook;
-            buildInputs = [
-              (pkgs.buildEnv {
-                name = "sg-deploy";
-                paths = with pkgs; [
-                  bashInteractive
-                  coreutils
-                  moreutils
-                  findutils
-                  levant
-                ];
-              })
-            ];
-          };
-          default = pkgs.mkShell {
-            inherit shellHook;
-            buildInputs = [
-              (pkgs.buildEnv {
-                name = "sg-dev";
-                paths = with pkgs; [
-                  bashInteractive
-                  coreutils
-                  moreutils
-                  findutils
-                  inotify-tools
-                  pandoc
-                  py
-                  tex
-                ];
-              })
-            ];
-          };
+        packages = {
+          # For running during deployments.
+          levant = pkgs.levant;
+        };
+        devShells.default = pkgs.mkShell {
+          inherit shellHook;
+          buildInputs = [
+            (pkgs.buildEnv {
+              name = "sg-dev";
+              paths = with pkgs; [
+                bashInteractive
+                coreutils
+                moreutils
+                findutils
+                inotify-tools
+                curl
+                pandoc
+                py
+                tex
+              ];
+            })
+          ];
         };
       }
     );
