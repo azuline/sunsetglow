@@ -55,6 +55,7 @@
     top: 2rem;
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
+    font-size: var(--font-size-xs);
   }
   .pandoc #TOC a {
     color: var(--color-fg-secondary);

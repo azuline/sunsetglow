@@ -1,0 +1,325 @@
+\documentclass{article}
+\usepackage{common}
+\title{React State Management}
+\begin{document}
+
+a. React is a view library: it handles rendering the view as a function from state. Rerendering too.
+b. React is broadly unopinionated about state. Over the years, several builtins beyond, this.state and useState have been added, but they are primitive.
+c. Yet state is important; it determines robustness and performance. React is a function from state to view; the better managed the state, the easier components are to write. Garbage in, garbage out.
+
+\section{Qualities}
+
+a. React builtins work for simple apps, but they fail to scale. They struggle to uphold four qualities in the face of complexity, rate of updates, and application size.
+b. Define state graph; state and its derived data. Important!
+c. Each type of state wants to adhere to these qualities; but the means for doing so vary greatly for each type of state.
+d. From the introduction of Flux in 2014, many patterns and libraries have been introduced to better maintain the four qualities as ... increases.
+
+\section{Categories}
+
+a. There are four types of state; brief descriptions.
+b. Component state; belongs to component, tied to the component tree, for better or for worse.
+c. Module state; separate from the component tree. Gives up the benefits of component tree coupling, but avoids its pitfalls.
+d. URL state; special type of global state traditionally used for navigation.
+e. Server state; state from a backend server; frontends are typically ephemeral.
+
+\section{Unidirectional Data Flow}
+
+From two-way data binding, unidirectional data flow as React's paradigm and as a means to solve cascading updates and guarantee predictability. Paradigm level shift which all idiomatic React state management patterns follow.
+
+\section{Component State}
+
+a. State coupled to a component. Comes into existence with a component; destructed with the component.
+b. The first method for defining state in React: React builtins are designed to manage component state, from this.state/setState in class component days to useState in hooks.
+c. Brief history of class state/setState to hooks useState/useReducer.
+d. Primitive; React is a view layer library, unopinionated about state.
+e. Locality, scope, perfect for local state. The structure of component state matches the component tree, such that component state is scoped to a subtree. Perfect.
+
+\subsection{Lifting State Up}
+
+a. As React apps grow larger, multiple features are created, each one component subtree in the broader application. Often, two features share some state.
+b. The coupling hurts here; component state must belong to one component subtree.
+c. The solution is the Lift State Up Pattern. 
+d. Performance implications of lifting state up. How rerendering works, child rerendering. Functional mental model.
+e. Prop drilling.
+f. In summary, component state is perfect for state local to a component subtree, but requires adaptation to be shared between multiple component subtrees.
+
+\subsection{Contexts}
+
+a. In 2018, Contexts (builtin) introduced to offer a complete solution to prop drilling. They also enabled a partial solution to performance.
+b. Once state has been lifted up, instead of prop drilling, it can be made available to entire subtree through a context.
+c. Optimize rerenders partially; Prevent children from rerendering with useMemo, Children prop contexts.
+d. However, large context problem follows, contexts are not a complete solution.
+
+\subsubsection{Context Splitting}
+
+a. Context splitting: example. Good paradigm; if you can avoid aggregating  contexts, it is a good thing.
+b. However, makes it harder to optimize expensive derived data in the contexts.
+c. Doesn't support dynamic length arrays. Limited in practicality.
+
+\subsubsection{Context Selectors}
+
+a. In 2019, RFC introduced to resolve the large context problem.
+b. Description
+c. Userland; stale props, not problematic in practice.
+
+\subsection{Refs}
+
+a. React's state model follows immutable updates. Explain immutable updates here.
+b. Refs are an escape hatch for this model; refs are mutable state in an otherwise immutable framework.
+c. They enable many behaviors, such as direct DOM access, state updates without rerenders, tracking past state, and cheat mode.
+d. But dangerous, avoid using it if possible.
+e. Examples of each... bullet point?
+
+\subsection{Reducers}
+
+a. With the introduction of hooks in React 16.8 (2019), the useReducer hook was added as a builtin.
+b. Alternative to useState but in the classic reducer pattern of functional programming; popularized in frontend by Redux.
+c. Equivalent in theoretical expressiveness to useState; simply an alternative.
+d. However, identity of the dispatch remains the same. Unlike setState, dispatch can be parametrized across rerenders.
+
+\subsubsection{Cheat Mode}
+
+a. More interestingly, it enables called cheat mode.
+b. This offers slightly better rerender performance as well.
+
+\subsection{Recommendations}
+
+a. Use Component state for local state. useState for simple state; consider useReducer for complicated updates.
+b. Sharing state requires component state to be lifted up, but this potentially introduces performance and prop drilling problems. Can either be resolved with contexts or using module state instead.
+c. Prefer flattening the component tree to resolve prop drilling. Otherwise, use contexts to solve prop drilling problem.
+d. Prefer to keep contexts small and optimise them by passing children prop. This will optimize renders.
+e. If contexts are large, e.g. because they contain expensive derived data, use context selectors to resolve the problem.
+f. When immutable state fails, consider refs. However, only in contexts unrelated to rendering.
+g. Note about context loss; see appendix.
+
+\section{Module State}
+
+a. React is but a view library; it was not designed for opinionated or powerful state management.
+b. It is hard to implement flexible state management patterns when coupled to the component tree. Coupling to the component tree also caused prop drilling and associated performance problems for shared state.
+c. Prior to context, those had no builtin solution. Hence, module state pattern moves state into module scope, decoupling from the component tree.
+d. Because it is decoupled, it is able to be accessed by multiple distinct component trees without going through a common ancestor. Naturally optimizes rerenders.
+e. However, because it is globally accessible, it is possible for any component to mutate it and add complexity. Requires discipline and additional patterns to maintain predictability. Many libraries add boilerplate and rigidity to force this discipline and ensure baseline predictability.
+
+\subsection{Synchronization}
+
+a. Because it lives outside component tree, React does not rerender upon change. React only rerenders when its builtin state changes.
+b. Therefore, external state stores must synchronize with React, example. This synchronization is imperfect and notably remains incompatible with concurrent mode.
+c. Example with useEffect and useSyncExternalStore; reference Concurrent Mode appendix for more information.
+
+\subsection{Flux Pattern}
+
+a. In 2014, React had just been released as OSS, people still figuring out how to use it. It was possible to plug React in as the view layer of an otherwise MVW application.
+b. FB/React team released Flux, their internal architecture. Got rid of models and controllers; embraced unidirectional data flow, aligned with the React paradigm of unidirectional data flow.
+c. Description; change events emitted from stores.
+d. Flux Wars; attempting to provide a complete Flux implementation and improve upon Facebook's architecture. 
+
+\subsubsection{Redux}
+
+a. Dan Abramov was preparing to give a talk about time travel debugging, so he wrote Redux to demonstrate it. Upon releasing Redux, it quickly won the flux wars. "I totally didn't intend to do this, I just wanted something for my talk."
+b. Redux made significant improvements upon Flux: (i) synchronization between stores was difficult -> redux had a single store, no dispatcher. (ii) self-mutating stores can easily become complicated and difficult to test -> immutable reducers
+c. No standards; 2019 RTK.
+d. Change event emitted after reducer runs.
+
+\subsubsection{Zustand}
+
+a. Another simplification of Flux to its very principles.
+b. Eschewed the forced reducer of Redux; allowed multiple stores again. More flexible, requires more discipline at scale to maintain predictability.
+c. Change event emitted after set call.
+
+\subsubsection{Selectors}
+
+a. By default, the components subscribe to a complete Flux store. They rerender upon change event, which is emitted for each X in Redux and Zustand.
+b. This causes numerous amounts of unnecessary rerenders.
+c. Flux stores implement selectors to subscribe to a subset of the store. See context selectors; it is the same pattern. Also see stale props appendix.
+d. Explain briefly selector semantics.
+e. All selectors run on each state update; therefore, they must be fast.
+
+\subsection{Observable Pattern}
+
+a. The forced immutable updates pattern of Redux and Zustand requires additional ceremony and boilerplate.
+b. JavaScript is a mutable language; enforcing immutable updates is somewhat unnatural.
+b. Furthermore, Flux is unperformant by default; requires carefully written selectors to optimize.
+
+\subsubsection{MobX}
+
+a. Introduced in 2016, MobX allowed defining state as mutable objects. Aligned with ``natural'' JavaScript, eliminating the boilerplate of Flux-style libraries.
+b. MobX instrumented the objects to intercept property accesses and mutations. Tracked property access during render; tracked mutations to rerender subscribing components.
+c. Example code and more description. Maintained the unidirectional data flow definitive to React. A difference in method but not data flow.
+d. Automatic perfect render optimization.
+e. Compare to Flux...
+f. However, cost. Does not work well with React immutable style; with React, you \ti{must} buy into immutable updates. So you already pay that overhead. Requires ceremony. Example of useMemo/useEffect ceremony.
+g. Also, property tracking does not work perfectly with some JavaScript features. e.g. using the object as-is does not trigger a property access, prop spreading breaks tracking. Footguns.
+
+\subsubsection{Valtio}
+
+a. Modern simplification of MobX with hooks and better integration with React state.
+b. Does not enforce colocation, like Zustand. More flexible, but requires more discipline at scale to maintain predictability.
+c. Also had fundamental incompatibilities with React; previously incompatible with useMemo. Valtio v2 compromised by giving up on perfect render optimization to become compatible with useMemo.
+
+\subsubsection{React Tracked}
+
+a. One of the two benefits of observables is that they provide automatic perfect render optimization, over that of selectors.
+b. It is possible to take the property access tracking of observables alone, without the mutable store part.
+b. React Tracked applies observable pattern to Contexts and Flux stores, as an alternative to their selectors.
+
+\subsection{Atom Pattern}
+
+a. Code-splitting is hampered by Context and Flux; often the root of the application is dependent upon large amounts of state logic.
+b. Additionally, module state thus far is completely unsuitable for any kind of state scoped to a single module; all Flux and MobX state is accessible everywhere.
+
+\subsubsection{Recoil}
+
+a. In 2020, FB introduced experimental Recoil that split the state graph into many small atoms.
+b. Atoms were decoupled from the store; allowing them to be bundled solely with their dependents. Explain how this works briefly. Atoms values reside in a global store; atom definitions do not. Atoms are like references to values in the global store.
+c. This fixed code splitting.
+d. Also can be scoped to a single module while still partaking in the rest of the state graph via import; this allowed atoms to be suitable for local state.
+e. Atoms emit change events on change. Since atoms are small and components subscribe to individual atoms, this pattern does not require selectors to subscribe to slices of an atom. However, optimization is still not as perfect as observable pattern.
+
+\subsubsection{Jotai}
+
+a. Recoil never left experimental status and had a big bundle size (80kb). It additionally required that each atom have a unique key in a global namespace.
+b. Six months after Recoil, Jotai came out and improved upon Recoil. Simpler API that eliminated keys in global namespace and cut the bundle size by 90\% to 8kb.
+c. Jotai further released many integrations to convert other state to atoms, allowing it to represent the complete state graph.
+d. When componentized; Jotai atoms are suitable as useState replacement. The benefit? Able to integrate with the rest of the (complete) state graph when deriving data.
+e. Note that Jotai chose not to force synchronous updates; it is subject to tearing, but will not lock the main thread. See appendix.
+
+\subsection{State Machine Pattern}
+
+a. Redux and MobX force colocation to improve predictability; can this be taken further?
+b. Yes! State machines take that to the next level. Pattern for structuring state that captures all possible states, their transitions, and the events of each state.
+c. Especially useful in multi-step flows and features with distinct user states.
+d. The pattern can be implemented within useState/useReducer and the module state libraries.
+
+\subsubsection{XState}
+
+e. When your state machines become too complicated, consider XState, which enables very powerful state machines but adds boilerplate.
+
+\subsection{Componentization}
+
+a. The broadly accessible scope of module state is suitable for shared state; but not for local state.
+b. Component state should be preferred for local state because its restricted scope avoids untoward coupling.
+c. However, component state is primitive; it lacks the power and structure of module state patterns.
+d. For features that desire that power and structure, but want the locality of component state, they can create the state store inside a component, making it component state instead of module state.
+e. This new state belongs to a component and is scoped to that component's subtree.
+f. Atoms have a superior method to handle this problem, https://jotai.org/docs/core/provider.
+
+\subsection{Dependency Injection}
+
+a. Traditionally, module state is left in module scope and imported by its consumers. Like so:
+b. However, this does not allow for dependency injection of the module state store, a very useful testing technique.
+c. Instead, module state can be placed inside a context and propagated to the entire application.
+d. Now, in testing, the module state can be replaced by a test-local populated store, a fake, or a mock.
+e. This is what Redux does; example. The same pattern can be used with observable state.
+f. Atoms have a better solution; being decoupled from the store, a new store can be provided for the subtree; consumers continue to use the atom defined in module scope.
+
+\subsection{Recommendations}
+
+a. Simple applications without large component trees, rapidly updating state, or non-React code to integrate with do not need module state.
+b. For those that do, pick one between flux, observable, and atom pattern; avoid mixing patterns in the same application. Put shared state in the module state store.
+c. Each has their strengths:
+  i.   Flux is straightforward, widely used, classic, and React-like. However, requires manual selector optimization and bad code splitting.
+  ii.  Observable has best render performance and low boilerplate, but requires mixing immutable and mutable styles and dealing with compatibility. Viable, but the cost is actually high.
+  iii. Atoms code split well and have incredible flexibility and performance. Atoms can also be used for local state.
+d. Alternatively, if there is no non-React code to integrate with, consider use-context-selector and do not use module state.
+e. Consider state machines for modeling complicated state; it is overkill for normal state though.
+
+\section{URL State}
+
+a. URL state is traditionally used to determine location in the application. However, it can also be used to store arbitrary state. The URL has three places to store state: path, search params, hash.
+b. It has a few interesting properties: Persists across page reloads; easily shared between users; bookmarkable.
+c. Typically, router libraries synchronize this state with the component tree and provide hooks. Otherwise, window.location and onLocationChange event can manually synchronize (see Appendix).
+d. Example of manual synchronization with useSyncExternalStore?
+
+\section{Server State}
+
+a. Formerly mentioned client side state; lacks persistence (c.f. appendix).
+b. Most applications have a server that stores large amounts of persistent mutable state.
+c. Frontend applications fetch that server state to render a view from it.
+d. This is difficult because of network.
+e. With server state, performance gains come from optimizing or masking network latency.
+
+\subsection{TanStack Query \& SWR}
+
+a. Use tanstack query/swr -- tanstack more mature and featureful; swr part of vercel and may integrate better with next.js in the future.
+b. To improve upon performance when multiple components depend on the same state, these libraries cache network requests globally. Advantaging the inherent global scope of the backend's resource.
+c. Components end up subscribing to specific requests; while it is easy for components to unnecessarily rerender if they only depend on a subset of a query; in most cases, requests are not updated rapidly enough for it to matter.
+
+\subsection{Cache Invalidation}
+
+a. Also mutations; this causes cached server state to go stale.
+b. Hence, cache invalidation, hard!
+c. Four approaches; all tradeoffs.
+
+\subsection{Optimistic Updates}
+
+a. In a cache invalidation, a mutation request must be sent; it must come back, then the frontend invalidates the cache, and refetches data. Two network request round trips until updated data can be shown.
+b. Often, the code sending the request knows how the invalidated requests should appear after the mutation.
+c. To make mutations seem instantaneous, the request sender can mutate the cache to match the expected results, giving the appearance of zero latency updates.
+d. However, the realities of networked communications make this complicated--what about failed mutations? concurrent mutations?
+e. The typical application should avoid overusing optimistic updates; only introduce them when they have a definitive user experience boost. They are more complicated than they seem to get right.
+
+\subsection{Prefetching}
+
+a. Components typically encapsulate their data fetching. Example with tanstack query. Fetching begins upon component render. This is known as Fetch-on-render.
+b. However, the sooner a network request completes, the more performant the application seems. The length of a network request is out of our control. However, the time it starts is within our control. It is optimal to start server state requests as early as possible.
+c. Furthermore, waterfall, example. A parent component's fetch can prevent a child component's fetch.
+d. By breaking the encapsulation of fetch-on-render, components can render sooner. Example of prefetching. This is known as prefetching. Can also preload before any renders with link preload.
+e. Breaking encapsulation like that makes the code harder to maintain because nothing connects the prefetch and the use site.
+f. Another technique is to pull all requests for a feature up into a context; this connects the early fetch to its consumers. But introduces more coupling between components and their site of use.
+
+\section{Derived Data}
+
+a. State graphs consist of (1) state and (2) data derived from state, or derived data. Image?
+b. Derived data is NOT state. It is derived from state.
+c. One anti-pattern is to create derived state. Example. Bad.
+d. In the past, class components had getDerivedStateFromProps, but it was overused and React team had to recommend against it https://legacy.reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#.
+
+\subsection{From Component State}
+
+a. Data can be derived from component state trivially. Example.
+b. Like component state, it belongs to the component tree; it is thus subject to the prop drilling and render optimization problems.
+
+\subsubsection{Memoization}
+
+same
+
+\subsubsection{Cascading Updates}
+
+same
+
+\subsection{From Flux State}
+
+a. Selectors can be used. The store should be kept as small as possible; no derived data inside it.
+b. However, remember that selectors must be quick to run since they run on every rerender.
+c. Expensive derived data computations in selectors must be manually memoized.
+
+\subsection{From Observable State}
+
+a. Getters in MobX and Valtio.
+b. Valtio, due to its compatibility with React hooks, can also be used like other React state pretty trivially so derived data can be calculated by any method.
+c. Auto-memoized due to property tracking, in the same way renders are optimized.
+
+\subsection{From Atom State}
+
+a. Derived atoms. Notably, derived atoms are identical in interface to normal atoms, so they can be used interchangeably. This decouples state graph from consumers.
+b. Auto-memoized; they only recompute when their dependent atoms change. If dependent atoms don't change, they don't change.
+
+\subsection{Composite Derived Data}
+
+same.
+
+\section{Appendices}
+
+\subsection{Context Loss}
+
+\subsection{Concurrent Mode}
+
+\subsection{Stale Props \& Zombie Child}
+
+\subsection{Batched Updates}
+
+\subsection{Client Side Persistence}
+
+\subsection{Effects}
+
+\end{document}
