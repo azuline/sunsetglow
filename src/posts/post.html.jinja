@@ -15,6 +15,7 @@
           entries.forEach(entry => {
             const id = entry.target.getAttribute("id");
             const element = document.querySelector(`#TOC li a[href="#${id}"]`);
+            if (!element) return;
             if (entry.intersectionRatio > 0) {
               element.classList.add("active");
             } else {
@@ -30,7 +31,7 @@
   <body>
     <div class="w-content mx-auto py-8 px-6">
       <div class="column">
-        <div class="text-sm label mono"><a class="decoration-none fg-primary" href="/">sunset glow</a></div>
+        <div class="text-sm label"><a class="decoration-none fg-primary" href="/">Home</a></div>
         <div class="py-16 flex flex-col gap-8" />
         <div class="flex flex-col gap-4">
           <div class="flex flex-col gap-2">

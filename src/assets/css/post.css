@@ -55,6 +55,7 @@
     top: 2rem;
     max-height: calc(100vh - 4rem);
     overflow-y: auto;
+    font-size: var(--font-size-xs);
   }
   .pandoc #TOC a {
     color: var(--color-fg-secondary);
@@ -86,14 +87,9 @@
   padding-bottom: 1rem;
 }
 
-.pandoc h3 {
+.pandoc h3,
+.pandoc h4{
   font-size: var(--font-size-lg);
-  padding-top: 1rem;
-  padding-bottom: .75rem;
-}
-
-.pandoc h4 {
-  font-size: var(--font-size-md);
   padding-top: 1rem;
   padding-bottom: .75rem;
 }

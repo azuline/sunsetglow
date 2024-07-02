@@ -16,8 +16,8 @@ JavaScript source code directly to the client leads to two primary problems:
     like JSX are not valid JavaScript and will not run in any browser.
 
   \item \tb{Performance:} The browser must request each JavaScript file individually. In a large
-    codebase, this can result in thousands of HTTP requests in order to render a single page. In the
-    past, prior to HTTP/2, this would also result in thousands of TLS handshakes.
+    codebase, this can result in thousands of HTTP requests to render a single page. In the past,
+    before HTTP/2, this would also result in thousands of TLS handshakes.
 
     In addition, several sequential network round trips may be needed before all the JavaScript is
     loaded. For example, if \tc{index.js} imports \texttt{page.js} and \texttt{page.js} imports
@@ -28,8 +28,8 @@ JavaScript source code directly to the client leads to two primary problems:
     indentation characters, increasing bandwidth usage and network loading time.
 \end{enumerate}
 
-Frontend build systems process source code and emit one or more JavaScript files which are optimized
-for sending to the browser. The resulting \ti{distributable} is typically illegible to humans.
+Frontend build systems process source code and emit one or more JavaScript files optimized for
+sending to the browser. The resulting \ti{distributable} is typically illegible to humans.
 
 \section{Build Steps}
 
@@ -50,7 +50,7 @@ in a modern version of the JavaScript standard to an older version of the JavaSc
 days, ES6/ES2015 is a common target.
 
 Frameworks and tools may also introduce transpilation steps. For example, the JSX syntax must be
-transpiled to JavaScript. If a library offers a Babel plugin, that usually means that they require a
+transpiled to JavaScript. If a library offers a Babel plugin, that usually means that it requires a
 transpilation step. Additionally, languages such as TypeScript, CoffeeScript, and Elm must be
 transpiled to JavaScript.
 
@@ -84,7 +84,7 @@ It is also possible to skip the transpilation step if your code is pure JavaScri
 Modules.
 
 An alternative solution for a subset of unsupported language features is a polyfill. Polyfills are
-executed at runtime and implement any missing language features prior to executing the main
+executed at runtime and implement any missing language features before executing the main
 application logic. However, this adds runtime cost, and some language features cannot be polyfilled.
 See \href{https://github.com/zloirock/core-js}{core-js}.
 
@@ -99,7 +99,7 @@ separate transpiler.
 Bundling solves the need to make many network requests and the waterfall problem. Bundlers
 concatenate multiple JavaScript source files into a single JavaScript output file, called a bundle,
 without changing application behavior. The bundle can be efficiently loaded by the browser in a
-single round trip network request.
+single round-trip network request.
 
 The bundlers in common use today are Webpack, Parcel, Rollup, esbuild, and Turbopack.
 
@@ -133,11 +133,11 @@ The bundlers in common use today are Webpack, Parcel, Rollup, esbuild, and Turbo
     Webpack, Rollup, and Parcel. Esbuild implements a basic transpiler as well as a minifier.
     However, it is less featureful than the other bundlers, providing a limited plugin API that
     cannot directly modify the AST. Instead of modifying source files with an esbuild plugin, the
-    files can be transformed prior to being passed to esbuild.
+    files can be transformed before being passed to esbuild.
 
   \item \href{https://turbo.build/pack}{\tb{Turbopack}} (2022) is a fast Rust bundler that supports
     incremental rebuilds. The project is built by Vercel and led by the creator of Webpack. It is
-    currently in beta and may be opted-into in Next.js.
+    currently in beta and may be opted into in Next.js.
 \end{enumerate}
 
 It is reasonable to skip the bundling step if you have very few modules or have very low network
@@ -148,7 +148,7 @@ development server.
 \subsubsection{Code Splitting}
 }
 
-By default, a client side React application is transformed into a single bundle. For large
+By default, a client-side React application is transformed into a single bundle. For large
 applications with many pages and features, the bundle can be very large, negating the original
 performance benefits of bundling.
 
@@ -166,7 +166,7 @@ creates separate bundles per page, only including the code imported by that page
 Loading a page preloads all bundles used by that page in parallel. This optimizes bundle size
 without re-introducing the waterfall problem. The filesystem router achieves this by creating one
 entry point per page (\tc{pages/**/*.jsx}), as opposed to the single entry point of traditional
-client side React apps (\tc{index.jsx}).
+client-side React apps (\tc{index.jsx}).
 
 \hypertarget{tree-shaking}{
 \subsubsection{Tree Shaking}
@@ -203,8 +203,8 @@ convention (e.g. \tc{/assets/css/banner.jpg} and \texttt{/assets/fonts/Inter.wof
 Webpack ``loaders'' allowed the importing of static assets from JavaScript, unifying both code and
 static assets into a single dependency graph. During bundling, Webpack replaces the static asset
 import with its final path inside the distributable. This feature enabled static assets to be
-organized with its associated components in the source code and created new possibilities for static
-analysis, such as detecting non-existent assets.
+organized with their associated components in the source code and created new possibilities for
+static analysis, such as detecting non-existent assets.
 
 It is important to recognize that the importing of static assets
 (non-JavaScript-or-transpiles-to-JavaScript files) is not part of the JavaScript language. It
@@ -233,7 +233,7 @@ be 100x faster than cssnano. Lightning CSS additionally supports CSS transformat
 \section{Developer Tooling}
 
 The basic frontend build pipeline described above is sufficient to create an optimized production
-distributable. There exist several classes of tools which augment the basic build pipeline and
+distributable. There exist several classes of tools that augment the basic build pipeline and
 improve upon developer experience.
 
 \subsection{Meta-Frameworks}
@@ -266,8 +266,8 @@ publicizing the source code.
 
 Each step of the build pipeline can emit a sourcemap. If multiple build tools are used to construct
 the pipeline, the sourcemaps will form a chain (e.g. \tc{source.js} -> \texttt{transpiler.map} ->
-\tc{bundler.map} -> \texttt{minifier.map}). In order to identify the source code corresponding to
-the minified code, the chain of source maps must be traversed.
+\tc{bundler.map} -> \texttt{minifier.map}). To identify the source code corresponding to the
+minified code, the chain of source maps must be traversed.
 
 However, most tools are not capable of interpreting a chain of sourcemaps; they expect at most one
 sourcemap per file in the distributable. The chain of sourcemaps must be flattened into a single
@@ -291,11 +291,11 @@ time complexity relative to bundle size. Hence, in large applications, Hot Modul
 become slow due to the growing rebundling cost.
 
 The \href{https://vitejs.dev/guide/why.html}{no-bundle paradigm}, currently championed by Vite,
-counters this by choosing to not bundle the development server. Instead, Vite serves ESM modules,
-each corresponding to a source file, directly to the browser. In this paradigm, each code change
-triggers a single module replacement in the frontend. This results in a near-constant refresh time
-complexity relative to application size. However, if you have many modules, the initial page load
-may take longer.
+counters this by not bundling the development server. Instead, Vite serves ESM modules, each
+corresponding to a source file, directly to the browser. In this paradigm, each code change triggers
+a single module replacement in the frontend. This results in a near-constant refresh time complexity
+relative to application size. However, if you have many modules, the initial page load may take
+longer.
 
 \subsection{Monorepos}
 
