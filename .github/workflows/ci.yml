@@ -54,7 +54,7 @@ jobs:
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       ARTIFACT_SOURCE_URL: ${{ needs.build.outputs.artifact_source_url }}
-      NOMAD_ADDR: http://100.84.146.55:4646
+      NOMAD_ADDR: http://100.104.105.144:4646
       NOMAD_NAMESPACE: sunsetglow
       NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
     steps:

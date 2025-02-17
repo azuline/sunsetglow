@@ -1,5 +1,5 @@
 job "sunsetglow-site" {
-  datacenters = ["frieren"]
+  datacenters = ["neptune"]
   namespace   = "sunsetglow"
   type        = "service"
 
