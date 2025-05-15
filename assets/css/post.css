@@ -1,0 +1,118 @@
+.pandoc a[href^="#"] {
+  color: var(--color-fg-primary);
+}
+.pandoc a[href^="#"].heading {
+  text-decoration: none;
+}
+.pandoc a[href^="#"].heading:hover::after {
+  padding-left: .5rem;
+  content: "#";
+  color: var(--color-detail);
+}
+
+.column {
+  max-width: 36rem;
+}
+
+.pandoc #TOC {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  /* background: var(--color-bg-nested); */
+  border-left: 2px solid var(--color-border-primary);
+}
+.pandoc #TOC ul,
+.pandoc #TOC li {
+  list-style-type: none;
+  padding-bottom: 0;
+}
+.pandoc #TOC ul {
+  padding-left: .5rem;
+}
+.pandoc #TOC li > ul {
+  padding-left: 1.25rem;
+}
+.pandoc #TOC a {
+  color: var(--color-fg-primary);
+}
+.pandoc #TOC a.active {
+  color: var(--color-fg-primary);
+}
+
+@media screen and (min-width: 1200px) {
+  .column {
+    max-width: 62rem;
+  }
+
+  .pandoc {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 4rem;
+  }
+  .pandoc #TOC {
+    flex: 0 0 20rem;
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    font-size: var(--font-size-xs);
+  }
+  .pandoc #TOC a {
+    color: var(--color-fg-secondary);
+  }
+  .pandoc #POST {
+    flex: 0 0 38rem;
+  }
+}
+
+.pandoc h1,
+.pandoc h2,
+.pandoc h3,
+.pandoc h4 {
+  font-family: "IBM Plex Sans";
+  font-weight: normal;
+  letter-spacing: -.02rem;
+  line-height: 1.15;
+}
+
+.pandoc h1 {
+  font-size: var(--font-size-xxl);
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
+}
+
+.pandoc h2 {
+  font-size: var(--font-size-xl);
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
+}
+
+.pandoc h3,
+.pandoc h4{
+  font-size: var(--font-size-lg);
+  padding-top: 1rem;
+  padding-bottom: .75rem;
+}
+
+.pandoc p,
+.pandoc pre,
+.pandoc blockquote {
+  padding-bottom: .5rem;
+}
+
+.pandoc .footnote-ref {
+  font-size: var(--font-size-xs);
+}
+
+.pandoc pre,
+.pandoc pre code {
+  padding-bottom: .5rem;
+  font-size: var(--font-size-xs);
+}
+
+.pandoc blockquote {
+  margin: 0 1.5rem;
+  line-height: 1.25;
+  font-size: var(--font-size-xs);
+  color: var(--color-fg-secondary);
+}

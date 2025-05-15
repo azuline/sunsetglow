@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="/assets/css/global.css?v=533d122" />
+<link href="https://sunsetglow.net/atom.xml" type="application/atom+xml" rel="alternate" title="Atom feed" />
+<script defer src="https://ozu.sunsetglow.net/script.js" data-website-id="6519316e-0391-4a7b-ae2a-f308d136b119"></script>
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+    <title>
+      
+      Exposition of Frontend Build Systems
+    </title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/post.css?v=533d122" />
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            const id = entry.target.getAttribute("id");
+            const element = document.querySelector(`#TOC li a[href="#${id}"]`);
+            if (!element) return;
+            if (entry.intersectionRatio > 0) {
+              element.classList.add("active");
+            } else {
+              element.classList.remove("active");
+            }
+          });
+        });
+        const selector = ".pandoc h1[id], .pandoc h2[id], .pandoc h3[id], .pandoc h4[id]";
+        document.querySelectorAll(selector).forEach((section) => observer.observe(section));
+      });
+    </script>
+  </head>
+  <body>
+    <div class="w-content mx-auto py-8 px-6">
+      <div class="column">
+        <div class="text-sm label"><a class="decoration-none fg-primary" href="/">Home</a></div>
+        <div class="py-16 flex flex-col gap-8" />
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <h1 class="display text-xxl medium">Exposition of Frontend Build Systems</h1>
+            
+          </div>
+          <div class="display text-sm fg-secondary italic">June 8, 2024</div>
+        </div>
+        <div class="pandoc">
+          
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#build-steps" id="toc-build-steps"><span
+class="toc-section-number">1.</span> Build Steps</a>
+<ul>
+<li><a href="#transpilation" id="toc-transpilation"><span
+class="toc-section-number">1.1.</span> Transpilation</a></li>
+<li><a href="#bundling" id="toc-bundling"><span
+class="toc-section-number">1.2.</span> Bundling</a>
+<ul>
+<li><a href="#code-splitting" id="toc-code-splitting"><span
+class="toc-section-number">1.2.1.</span> Code Splitting</a></li>
+<li><a href="#tree-shaking" id="toc-tree-shaking"><span
+class="toc-section-number">1.2.2.</span> Tree Shaking</a></li>
+<li><a href="#static-assets" id="toc-static-assets"><span
+class="toc-section-number">1.2.3.</span> Static Assets</a></li>
+</ul></li>
+<li><a href="#minification" id="toc-minification"><span
+class="toc-section-number">1.3.</span> Minification</a></li>
+</ul></li>
+<li><a href="#developer-tooling" id="toc-developer-tooling"><span
+class="toc-section-number">2.</span> Developer Tooling</a>
+<ul>
+<li><a href="#meta-frameworks" id="toc-meta-frameworks"><span
+class="toc-section-number">2.1.</span> Meta-Frameworks</a></li>
+<li><a href="#sourcemaps" id="toc-sourcemaps"><span
+class="toc-section-number">2.2.</span> Sourcemaps</a></li>
+<li><a href="#hot-reload" id="toc-hot-reload"><span
+class="toc-section-number">2.3.</span> Hot Reload</a></li>
+<li><a href="#monorepos" id="toc-monorepos"><span
+class="toc-section-number">2.4.</span> Monorepos</a></li>
+</ul></li>
+<li><a href="#trends" id="toc-trends"><span
+class="toc-section-number">3.</span> Trends</a></li>
+</ul>
+</nav><div id="POST">
+<p>Developers write JavaScript; browsers run JavaScript. Fundamentally,
+no build step is necessary in frontend development. So why do we have a
+build step in modern frontend?</p>
+<p>As frontend codebases grow larger, and as developer ergonomics become
+more important, shipping JavaScript source code directly to the client
+leads to two primary problems:</p>
+<ol>
+<li><p><strong>Unsupported Language Features:</strong> Because
+JavaScript runs in the browser, and because there are many browsers out
+there of a variety of versions, each language feature you use reduces
+the number of clients that can execute your JavaScript. Furthermore,
+language extensions like JSX are not valid JavaScript and will not run
+in any browser.</p></li>
+<li><p><strong>Performance:</strong> The browser must request each
+JavaScript file individually. In a large codebase, this can result in
+thousands of HTTP requests to render a single page. In the past, before
+HTTP/2, this would also result in thousands of TLS handshakes.</p>
+<p>In addition, several sequential network round trips may be needed
+before all the JavaScript is loaded. For example, if
+<code>index.js</code> imports <code>page.js</code> and
+<code>page.js</code> imports <code>button.js</code>, three sequential
+network round trips are necessary to fully load the JavaScript. This is
+called the waterfall problem.</p>
+<p>Source files can also be unnecessarily large due to long variable
+names and whitespace indentation characters, increasing bandwidth usage
+and network loading time.</p></li>
+</ol>
+<p>Frontend build systems process source code and emit one or more
+JavaScript files optimized for sending to the browser. The resulting
+<em>distributable</em> is typically illegible to humans.</p>
+<h1 data-number="1" id="build-steps"><a href="#build-steps" class="heading"><span
+class="header-section-number">1.</span> Build Steps</a></h1>
+<p>Frontend build systems typically consist of three steps:
+transpilation, bundling, and minification.</p>
+<p>Some applications may not require all three steps. For example,
+smaller codebases may not require bundling or minification, and
+development servers may skip bundling and/or minification for
+performance. Additional custom steps may also be added.</p>
+<p>Some tools implement multiple build steps. Notably, bundlers often
+implement all three steps, and a bundler alone may be sufficient to
+build straightforward applications. Complex applications may require
+specialized tools for each build step that provide larger feature
+sets.</p>
+<h2 data-number="1.1" id="transpilation"><a href="#transpilation" class="heading"><span
+class="header-section-number">1.1.</span> Transpilation</a></h2>
+<p>Transpilation solves the problem of unsupported language features by
+converting JavaScript written in a modern version of the JavaScript
+standard to an older version of the JavaScript standard. These days,
+ES6/ES2015 is a common target.</p>
+<p>Frameworks and tools may also introduce transpilation steps. For
+example, the JSX syntax must be transpiled to JavaScript. If a library
+offers a Babel plugin, that usually means that it requires a
+transpilation step. Additionally, languages such as TypeScript,
+CoffeeScript, and Elm must be transpiled to JavaScript.</p>
+<p><a href="https://wiki.commonjs.org/wiki/Modules">CommonJS modules</a>
+(CJS) must also be transpiled to a browser-compatible module system.
+After browsers added widespread support for <a
+href="https://exploringjs.com/es6/ch_modules.html">ES6 Modules</a> (ESM)
+in 2018, transpilation to ESM has generally been recommended. ESM is
+furthermore easier to optimize and <a
+href="#tree-shaking">tree-shake</a> since its imports and exports are
+statically defined.</p>
+<p>The transpilers in common use today are Babel, SWC, and TypeScript
+Compiler.</p>
+<ol>
+<li><p><a href="https://babeljs.io/"><strong>Babel</strong></a> (2014)
+is the standard transpiler: a slow single-threaded transpiler written in
+JavaScript. Many frameworks and libraries that require transpilation do
+so via a Babel plugin, requiring Babel to be part of the build process.
+However, Babel is hard to debug and can often be confusing.</p></li>
+<li><p><a href="https://swc.rs/"><strong>SWC</strong></a> (2020) is a
+fast multi-threaded transpiler written in Rust. It claims to be 20x
+faster than Babel; hence, it is used by the newer frameworks and build
+tools. It supports transpiling TypeScript and JSX. If your application
+does not require Babel, SWC is a superior choice.</p></li>
+<li><p><a
+href="https://github.com/microsoft/TypeScript"><strong>TypeScript
+Compiler (tsc)</strong></a> also supports transpiling TypeScript and
+JSX. It is the reference implementation of TypeScript and the only fully
+featured TypeScript type checker. However, it is very slow. While a
+TypeScript application must typecheck with the TypeScript Compiler, for
+its build step, an alternative transpiler will be much more
+performant.</p></li>
+</ol>
+<p>It is also possible to skip the transpilation step if your code is
+pure JavaScript and uses ES6 Modules.</p>
+<p>An alternative solution for a subset of unsupported language features
+is a polyfill. Polyfills are executed at runtime and implement any
+missing language features before executing the main application logic.
+However, this adds runtime cost, and some language features cannot be
+polyfilled. See <a
+href="https://github.com/zloirock/core-js">core-js</a>.</p>
+<p>All bundlers are also inherently transpilers, as they parse multiple
+JavaScript source files and emit a new bundled JavaScript file. When
+doing so, they can pick which language features to use in their emitted
+JavaScript file. Some bundlers are additionally capable of parsing
+TypeScript and JSX source files. If your application has straightforward
+transpilation needs, you may not need a separate transpiler.</p>
+<h2 data-number="1.2" id="bundling"><a href="#bundling" class="heading"><span
+class="header-section-number">1.2.</span> Bundling</a></h2>
+<p>Bundling solves the need to make many network requests and the
+waterfall problem. Bundlers concatenate multiple JavaScript source files
+into a single JavaScript output file, called a bundle, without changing
+application behavior. The bundle can be efficiently loaded by the
+browser in a single round-trip network request.</p>
+<p>The bundlers in common use today are Webpack, Parcel, Rollup,
+esbuild, and Turbopack.</p>
+<ol>
+<li><p><a href="https://webpack.js.org/"><strong>Webpack</strong></a>
+(2014) gained significant popularity around 2016, later becoming the
+standard bundler. Unlike the then-incumbent Browserify, which was
+commonly used with the Gulp task runner, Webpack pioneered “loaders”
+that transformed source files upon import, allowing Webpack to
+orchestrate the entire build pipeline.</p>
+<p>Loaders allowed developers to transparently import static assets
+inside JavaScript files, combining all source files and static assets
+into a single dependency graph. With Gulp, each type of static asset had
+to be built as a separate task. Webpack also supported <a
+href="#code-splitting">code splitting</a> out of the box, simplifying
+its setup and configuration.</p>
+<p>Webpack is slow and single-threaded, written in JavaScript. It is
+highly configurable, but its many configuration options can be
+confusing.</p></li>
+<li><p><a href="https://rollupjs.org/"><strong>Rollup</strong></a>
+(2016) capitalized on the widespread browser support of ES6 Modules and
+the optimizations it enabled, namely <a href="#tree-shaking">tree
+shaking</a>. It produced far smaller bundle sizes than Webpack, leading
+Webpack to later adopt similar optimizations. Rollup is a
+single-threaded bundler written in JavaScript, only slightly more
+performant than Webpack.</p></li>
+<li><p><a href="https://parceljs.org/"><strong>Parcel</strong></a>
+(2018) is a low-configuration bundler designed to “just work” out of the
+box, providing sensible default configurations for all steps of the
+build process and developer tooling needs. It is multithreaded and much
+faster than Webpack and Rollup. Parcel 2 uses SWC under the
+hood.</p></li>
+<li><p><a href="https://esbuild.github.io/"><strong>Esbuild</strong></a>
+(2020) is a bundler architected for parallelism and optimal performance,
+written in Go. It is dozens of times more performant than Webpack,
+Rollup, and Parcel. Esbuild implements a basic transpiler as well as a
+minifier. However, it is less featureful than the other bundlers,
+providing a limited plugin API that cannot directly modify the AST.
+Instead of modifying source files with an esbuild plugin, the files can
+be transformed before being passed to esbuild.</p></li>
+<li><p><a href="https://turbo.build/pack"><strong>Turbopack</strong></a>
+(2022) is a fast Rust bundler that supports incremental rebuilds. The
+project is built by Vercel and led by the creator of Webpack. It is
+currently in beta and may be opted into in Next.js.</p></li>
+</ol>
+<p>It is reasonable to skip the bundling step if you have very few
+modules or have very low network latency (e.g. on localhost). Several
+development servers also choose not to bundle modules for the
+development server.</p>
+<h3 data-number="1.2.1" id="code-splitting"><a href="#code-splitting" class="heading"><span
+class="header-section-number">1.2.1.</span> Code Splitting</a></h3>
+<p>By default, a client-side React application is transformed into a
+single bundle. For large applications with many pages and features, the
+bundle can be very large, negating the original performance benefits of
+bundling.</p>
+<p>Dividing the bundle into several smaller bundles, or <em>code
+splitting</em>, solves this problem. A common approach is to split each
+page into a separate bundle. With HTTP/2, shared dependencies may also
+be factored out into their own bundles to avoid duplication at little
+cost. Additionally, large modules may split into a separate bundle and
+lazy-loaded on-demand.</p>
+<p>After code splitting, the filesize of each bundle is greatly reduced,
+but additional network round trips are now necessary, potentially
+re-introducing the waterfall problem. Code splitting is a tradeoff.</p>
+<p>The filesystem router, popularized by Next.js, optimizes the code
+splitting tradeoff. Next.js creates separate bundles per page, only
+including the code imported by that page in its bundles. Loading a page
+preloads all bundles used by that page in parallel. This optimizes
+bundle size without re-introducing the waterfall problem. The filesystem
+router achieves this by creating one entry point per page
+(<code>pages/**/*.jsx</code>), as opposed to the single entry point of
+traditional client-side React apps (<code>index.jsx</code>).</p>
+<h3 data-number="1.2.2" id="tree-shaking"><a href="#tree-shaking" class="heading"><span
+class="header-section-number">1.2.2.</span> Tree Shaking</a></h3>
+<p>A bundle is composed of multiple modules, each of which contains one
+or more exports. Often, a given bundle will only make use of a subset of
+exports from the modules it imports. The bundler can remove the unused
+exports of its modules in a process called <em>tree shaking</em>. This
+optimizes the bundle size, improving loading and parsing times.</p>
+<p>Tree shaking depends on static analysis of the source files, and is
+thus impeded when static analysis is made more challenging. Two primary
+factors influence the efficiency of tree shaking:</p>
+<ol>
+<li><p><strong>Module System:</strong> ES6 Modules have static exports
+and imports, while CommonJS modules have dynamic exports and imports.
+Bundlers are thus able to be more aggressive and efficient when tree
+shaking ES6 Modules.</p></li>
+<li><p><strong>Side Effects:</strong> The <code>sideEffects</code>
+property of <code>package.json</code> declares whether a module has side
+effects on import. When side effects are present, unused modules and
+unused exports may not be tree shaken due to the limitations of static
+analysis.</p></li>
+</ol>
+<h3 data-number="1.2.3" id="static-assets"><a href="#static-assets" class="heading"><span
+class="header-section-number">1.2.3.</span> Static Assets</a></h3>
+<p>Static assets, such as CSS, images, and fonts, are typically added to
+the distributable in the bundling step. They may also be optimized for
+filesize in the minification step.</p>
+<p>Prior to Webpack, static assets were built separately from the source
+code in the build pipeline as an independent build task. To load the
+static assets, the application had to reference them by their final path
+in the distributable. Thus, it was common to carefully organize assets
+around a URL convention (e.g. <code>/assets/css/banner.jpg</code> and
+<code>/assets/fonts/Inter.woff2</code>).</p>
+<p>Webpack “loaders” allowed the importing of static assets from
+JavaScript, unifying both code and static assets into a single
+dependency graph. During bundling, Webpack replaces the static asset
+import with its final path inside the distributable. This feature
+enabled static assets to be organized with their associated components
+in the source code and created new possibilities for static analysis,
+such as detecting non-existent assets.</p>
+<p>It is important to recognize that the importing of static assets
+(non-JavaScript-or-transpiles-to-JavaScript files) is not part of the
+JavaScript language. It requires a bundler configured with support for
+that asset type. Fortunately, the bundlers that followed Webpack also
+adopted the “loaders” pattern, making this feature commonplace.</p>
+<h2 data-number="1.3" id="minification"><a href="#minification" class="heading"><span
+class="header-section-number">1.3.</span> Minification</a></h2>
+<p>Minification resolves the problem of unnecessarily large files.
+Minifiers reduce the size of a file without affecting its behavior. For
+JavaScript code and CSS assets, minifiers can shorten variables,
+eliminate whitespace and comments, eliminate dead code, and optimize
+language feature use. For other static assets, minifiers can perform
+file size optimization. Minifiers are typically run on a bundle at the
+end of the build process.</p>
+<p>Several JavaScript minifiers in common use today are Terser, esbuild,
+and SWC. <a href="https://terser.org/"><strong>Terser</strong></a> was
+forked from the unmaintained uglify-es. It is written in JavaScript and
+is somewhat slow. <strong>Esbuild</strong> and <strong>SWC</strong>,
+mentioned previously, implement minifiers in addition to their other
+capabilities and are faster than Terser.</p>
+<p>Several CSS minifiers in common use today are cssnano, csso, and
+Lightning CSS. <a
+href="https://cssnano.github.io/cssnano/"><strong>Cssnano</strong></a>
+and <a href="https://github.com/css/csso"><strong>csso</strong></a> are
+pure CSS minifiers written in JavaScript and thus somewhat slow. <a
+href="https://lightningcss.dev/"><strong>Lightning CSS</strong></a> is
+written in Rust and claims to be 100x faster than cssnano. Lightning CSS
+additionally supports CSS transformation and bundling.</p>
+<h1 data-number="2" id="developer-tooling"><a href="#developer-tooling" class="heading"><span
+class="header-section-number">2.</span> Developer Tooling</a></h1>
+<p>The basic frontend build pipeline described above is sufficient to
+create an optimized production distributable. There exist several
+classes of tools that augment the basic build pipeline and improve upon
+developer experience.</p>
+<h2 data-number="2.1" id="meta-frameworks"><a href="#meta-frameworks" class="heading"><span
+class="header-section-number">2.1.</span> Meta-Frameworks</a></h2>
+<p>The frontend space is notorious for the challenge of picking the
+“right” packages to use. For example, of the five bundlers listed above,
+which should you pick?</p>
+<p>Meta-frameworks provide a curated set of already selected packages,
+including build tools, that synergize and enable specialized application
+paradigms. For example, <a
+href="https://nextjs.org"><strong>Next.js</strong></a> specializes in
+Server-Side Rendering (SSR) and <a
+href="https://remix.run"><strong>Remix</strong></a> specializes in
+progressive enhancement.</p>
+<p>Meta-frameworks typically provide a preconfigured build system,
+removing the need for you to stitch one together. Their build systems
+have configurations for both production and development servers.</p>
+<p>Like meta-frameworks, build tools like <a
+href="https://vitejs.dev/"><strong>Vite</strong></a> provide
+preconfigured build systems for both production and development. Unlike
+meta-frameworks, they do not force a specialized application paradigm.
+They are suitable for generic frontend applications.</p>
+<h2 data-number="2.2" id="sourcemaps"><a href="#sourcemaps" class="heading"><span
+class="header-section-number">2.2.</span> Sourcemaps</a></h2>
+<p>The distributable emitted by the build pipeline is illegible to most
+humans. This makes it difficult to debug any errors that occur, as their
+tracebacks point to illegible code.</p>
+<p><a
+href="https://developer.chrome.com/blog/sourcemaps/">Sourcemaps</a>
+resolve this problem by mapping code in the distributable back to its
+original location in the source code. The browser and triage tools (e.g.
+Sentry) use the sourcemaps to restore and display the original source
+code. In production, sourcemaps are often hidden from the browser and
+only uploaded to triage tools to avoid publicizing the source code.</p>
+<p>Each step of the build pipeline can emit a sourcemap. If multiple
+build tools are used to construct the pipeline, the sourcemaps will form
+a chain (e.g. <code>source.js</code> -&gt; <code>transpiler.map</code>
+-&gt; <code>bundler.map</code> -&gt; <code>minifier.map</code>). To
+identify the source code corresponding to the minified code, the chain
+of source maps must be traversed.</p>
+<p>However, most tools are not capable of interpreting a chain of
+sourcemaps; they expect at most one sourcemap per file in the
+distributable. The chain of sourcemaps must be flattened into a single
+sourcemap. Preconfigured build systems will solve this problem (see
+Vite’s <a
+href="https://github.com/vitejs/vite/blob/feae09fdfab505e58950c915fe5d8dd103d5ffb9/packages/vite/src/node/utils.ts#L831"><code>combineSourcemaps</code></a>
+function).</p>
+<h2 data-number="2.3" id="hot-reload"><a href="#hot-reload" class="heading"><span
+class="header-section-number">2.3.</span> Hot Reload</a></h2>
+<p>Development servers often provide a Hot Reload feature, which
+automatically rebuilds a new bundle on source code changes and reloads
+the browser. While greatly superior to rebuilding and reloading
+manually, it is still somewhat slow, and all client-side state is lost
+on reload.</p>
+<p><a href="https://webpack.js.org/concepts/hot-module-replacement/">Hot
+Module Replacement</a> improves upon Hot Reload by replacing changed
+bundles in the running application, an in-place update. This preserves
+the client-side state of unchanged modules and reduces the latency
+between code change and updated application.</p>
+<p>However, each code change triggers the rebuild of all the bundles
+that import it. This has a linear time complexity relative to bundle
+size. Hence, in large applications, Hot Module Replacement can become
+slow due to the growing rebundling cost.</p>
+<p>The <a href="https://vitejs.dev/guide/why.html">no-bundle
+paradigm</a>, currently championed by Vite, counters this by not
+bundling the development server. Instead, Vite serves ESM modules, each
+corresponding to a source file, directly to the browser. In this
+paradigm, each code change triggers a single module replacement in the
+frontend. This results in a near-constant refresh time complexity
+relative to application size. However, if you have many modules, the
+initial page load may take longer.</p>
+<h2 data-number="2.4" id="monorepos"><a href="#monorepos" class="heading"><span
+class="header-section-number">2.4.</span> Monorepos</a></h2>
+<p>In organizations with multiple teams or multiple applications, the
+frontend may be split into multiple JavaScript packages, but retained in
+a single repository. In such architectures, each package has its own
+build step, and together they form a dependency graph of packages. The
+applications reside at the roots of the dependency graphs.</p>
+<p>Monorepo tools orchestrate the building of the dependency graph. They
+often provide features such as incremental rebuilds, parallelism, and
+remote caching. With these features, large codebases can enjoy the build
+times of small codebases.</p>
+<p>The broader industry-standard monorepo tools, like <a
+href="https://bazel.build/">Bazel</a>, support a broad set of languages,
+complicated build graphs, and hermetic execution. However, JavaScript
+for frontend is one of the hardest ecosystems to completely integrate
+with these tools, and there is currently little prior art.</p>
+<p>Fortunately, there exist several monorepo tools designed specifically
+for frontend. Unfortunately, they lack the flexibility and robustness of
+Bazel et al., most notably hermetic execution.</p>
+<p>The frontend-specific monorepo tools in common use today are <a
+href="https://nx.dev/"><strong>Nx</strong></a> and <a
+href="https://turbo.build/repo"><strong>Turborepo</strong></a>. Nx is
+more mature and featureful, while Turborepo is part of the Vercel
+ecosystem. In the past, <a
+href="https://lerna.js.org/"><strong>Lerna</strong></a> was the standard
+tool for linking multiple JavaScript packages together and publishing
+them to NPM. In 2022, the Nx team took over Lerna, and Lerna now uses Nx
+under the hood to power builds.</p>
+<h1 data-number="3" id="trends"><a href="#trends" class="heading"><span
+class="header-section-number">3.</span> Trends</a></h1>
+<p>Newer build tools are written in compiled languages and emphasize
+performance. Frontend builds were terribly slow in 2019, but modern
+tools have greatly sped it up. However, modern tools have smaller
+feature sets and are sometimes incompatible with libraries, so legacy
+codebases often cannot easily switch to them.</p>
+<p>Server-Side Rendering (SSR) has become more popular after the rise of
+Next.js. SSR does not introduce any fundamental differences to frontend
+build systems. SSR applications must also serve JavaScript to the
+browser, and they thus execute the same build steps.</p>
+</div>
+        </div>
+        <div class="br-top br-secondary"></div>
+        <div class="flex justify-between">
+          <div class="text-xs fg-secondary">
+            <a href="https://sunsetglow.net/atom.xml" class="fg-secondary">Feed</a>
+          </div>
+          <div class="text-xs fg-secondary">
+            Found an error or typo? PRs welcome! |
+            <a href="https://github.com/azuline/sunsetglow/blob/master/src/posts/tex/frontend-build-systems.tex" class="fg-secondary">Source</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
