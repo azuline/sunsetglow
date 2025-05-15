@@ -63,6 +63,8 @@ jobs:
         run: curl -L $ARTIFACT_SOURCE_URL | tar -xz
       - name: Commit and push
         run: |
+          git config --global user.name 'Github Actions'
+          git config --global user.email 'ci@localhost'
           git add . 
           git commit -m "Replacing contents with $ARTIFACT_SOURCE_URL"
           git push
