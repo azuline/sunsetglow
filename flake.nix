@@ -43,10 +43,6 @@
         '';
       in
       {
-        packages = {
-          # For running during deployments.
-          levant = pkgs.levant;
-        };
         devShells.default = pkgs.mkShell {
           inherit shellHook;
           buildInputs = [
