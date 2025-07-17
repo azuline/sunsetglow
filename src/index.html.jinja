@@ -17,9 +17,15 @@
         </ul>
       </div>
       <div class="flex flex-col gap-1">
-        <div class="bold">Writing:</div>
+        <div class="bold">Software:</div>
         <ul>
-        {% for slug, post in posts.items() %}
+          <li><a href="https://github.com/azuline/rose">Rosé</a>, a music management system.</li>
+        </ul>
+      </div>
+      <div class="flex flex-col gap-1">
+        <div class="bold">Longform:</div>
+        <ul>
+        {% for slug, post in posts.longform.items() %}
           <li>
             <span class="tabular-nums">{{ post.timestamp.strftime("%Y-%m-%d") }}</span> |
             <a href="/posts/{{ slug }}.html">
@@ -30,13 +36,21 @@
         </ul>
       </div>
       <div class="flex flex-col gap-1">
-        <div class="bold">Software:</div>
+        <div class="bold">Shortform:</div>
         <ul>
-          <li><a href="https://github.com/azuline/rose">Rosé</a>, a music management system.</li>
+        {% for slug, post in posts.shortform.items() %}
+          <li>
+            <span class="tabular-nums">{{ post.timestamp.strftime("%Y-%m-%d") }}</span> |
+            <a href="/scribbles/{{ slug }}.html">
+              {{ post.title }}{% if post.fascicle %}, Fascicle {{ post.fascicle.index }}: {{ post.fascicle.title }}{% endif %}
+            </a>
+          </li>
+        {% endfor %}
         </ul>
       </div>
       <div>
-        <a href="/atom.xml" class="text-xs fg-secondary">(feed)</a>
+        <a href="/posts/atom.xml" class="text-xs fg-secondary">(longform feed)</a>
+        <a href="/scribbles/atom.xml" class="text-xs fg-secondary">(shortform feed)</a>
         <a href="https://github.com/azuline/sunsetglow" class="text-xs fg-secondary">(source)</a>
       </div>
     </div>

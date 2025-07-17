@@ -1,7 +1,9 @@
 {
-  "frontend-build-systems": {
-    "title": "Exposition of Frontend Build Systems",
-    "timestamp": "2024-06-08T03:46:00Z",
-    "public": true
-  }
+	"longform": {
+		"frontend-build-systems": {
+			"title": "Exposition of Frontend Build Systems",
+			"timestamp": "2024-06-08T03:46:00Z"
+		}
+	},
+	"shortform": {}
 }

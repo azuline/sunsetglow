@@ -39,7 +39,6 @@ class PostMeta:
     title: str
     fascicle: Fascicle | None
     timestamp: datetime
-    public: bool
 
     @classmethod
     def parse(cls, slug: str, d: dict[str, Any]) -> PostMeta:
@@ -48,40 +47,28 @@ class PostMeta:
             title=d["title"],
             timestamp=datetime.fromisoformat(d["timestamp"]),
             fascicle=Fascicle(**f) if (f := d.get("fascicle", None)) else None,
-            public=d["public"],
         )
 
     @functools.cached_property
-    def lastupdated(self) -> datetime | None:
+    def lastupdated(self) -> datetime:
         p = f"src/posts/tex/{self.slug}.tex"
-        r = subprocess.run(
-            ["git", "log", "-1", "--format=%cI", p],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        text = r.stdout.strip()
-        if not text:
-            return None
-        lastupdated = datetime.fromisoformat(text).astimezone(pytz.utc)
-        if lastupdated.date() == self.timestamp.date():
-            return None
-        return lastupdated
+        r = subprocess.run(["git", "log", "-1", "--format=%cI", p], check=True, capture_output=True, text=True)
+        if text := r.stdout.strip():
+            return datetime.fromisoformat(text).astimezone(pytz.utc)
+        return self.timestamp
 
 
-PostIndex = dict[str, PostMeta]
+@dataclasses.dataclass
+class PostIndex:
+    longform: dict[str, PostMeta]
+    shortform: dict[str, PostMeta]
 
 
 # UTILS
 
 
 def site_updated_at() -> datetime:
-    r = subprocess.run(
-        ["git", "log", "-1", "--format=%cI"],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    r = subprocess.run(["git", "log", "-1", "--format=%cI"], check=True, capture_output=True, text=True)
     text = r.stdout.strip()
     return datetime.fromisoformat(text).astimezone(pytz.utc)
 
@@ -114,113 +101,88 @@ def compile_favicons():
 def compile_index(posts: PostIndex, commit: str):
     with Path("src/index.html.jinja").open("r") as fp:
         tpl = je.from_string(fp.read())
-
-    # Write the main index.html
-    publicposts = {k: v for k, v in reversed(posts.items()) if v.public}
-    index = tpl.render(posts=publicposts, commit=commit)
     with Path("dist/index.html").open("w") as fp:
-        fp.write(index)
-
-    # Write a staging index.html
-    stagingposts = dict(reversed(posts.items()))
-    staging = tpl.render(posts=stagingposts, commit=commit)
-    with Path("dist/staging.html").open("w") as fp:
-        fp.write(staging)
+        fp.write(tpl.render(posts=posts, commit=commit))
 
 
 def compile_posts(posts: PostIndex, commit: str):
-    Path("dist/posts").mkdir()
     with Path("src/posts/post.html.jinja").open("r") as fp:
         tpl = je.from_string(fp.read())
-    for f in Path("src/posts/tex").iterdir():
-        if not f.suffix == ".tex":
-            continue
+    for path, entries in [("posts", posts.longform), ("scribbles", posts.shortform)]:
+        Path("dist", path).mkdir()
+        for slug, meta in entries.items():
+            f = Path(f"src/posts/tex/{slug}.tex")
 
-        # Compile the post from LaTeX to HTML.
-        with tempfile.NamedTemporaryFile(suffix=".html") as tmp:
-            subprocess.run(
-                [
-                    "pandoc",
-                    "--standalone",  # Puts TOC into the .html, but we have to trim the rest.
-                    "--table-of-contents",
-                    "--number-sections",
-                    str(f),
-                    "-o",
-                    tmp.name,
-                ],
-                check=True,
+            # Compile the post from LaTeX to HTML.
+            with tempfile.NamedTemporaryFile(suffix=".html") as tmp:
+                # --standalone: puts TOC into the .html, but we have to trim the rest.
+                subprocess.run(["pandoc", "--standalone", "--table-of-contents", "--number-sections", str(f), "-o", tmp.name], check=True)
+                tmp.seek(0)
+                post = tmp.read().decode()
+
+            # Trim the unnecessary parts of the pandoc output, leaving only the TOC and the post.
+            trim_start = post.find("</header>") + len("</header>")
+            trim_end = post.find("</body")
+            post = post[trim_start:trim_end]
+            # Wrap the main article inside a div.
+            nav_end = post.find("</nav>") + len("</nav>")
+            post = post[:nav_end] + '<div id="POST">' + post[nav_end:] + "</div>"
+            # Add dots after ToC and header section numbers.
+            post = re.sub(r'(-section-number">[^<]*)', r"\1.", post)
+            # Add clickable links to headings.
+            post = re.sub(
+                r'(<h[1-6])(.*?)id="([^"]+)"([^>]*)>(.+?)</h',
+                r'\1\2id="\3"\4><a href="#\3" class="heading">\5</a></h',
+                post,
+                flags=re.MULTILINE | re.DOTALL,
             )
-            tmp.seek(0)
-            post = tmp.read().decode()
 
-        # Trim the unnecessary parts of the pandoc output, leaving only the TOC and the post.
-        trim_start = post.find("</header>") + len("</header>")
-        trim_end = post.find("</body")
-        post = post[trim_start:trim_end]
-        # Wrap the main article inside a div.
-        nav_end = post.find("</nav>") + len("</nav>")
-        post = post[:nav_end] + '<div id="POST">' + post[nav_end:] + "</div>"
-        # Add dots after ToC and header section numbers.
-        post = re.sub(r'(-section-number">[^<]*)', r"\1.", post)
-        # Add clickable links to headings.
-        post = re.sub(
-            r'(<h[1-6])(.*?)id="([^"]+)"([^>]*)>(.+?)</h',
-            r'\1\2id="\3"\4><a href="#\3" class="heading">\5</a></h',
-            post,
-            flags=re.MULTILINE | re.DOTALL,
-        )
-
-        # Wrap the post with a Jinja template.
-        slug = f.stem
-        meta = posts[slug]
-        post = tpl.render(slug=slug, meta=meta, body=post, commit=commit)
-
-        # Write the compiled post.
-        with Path("dist/posts", f.parts[-1]).with_suffix(".html").open("w") as fp:
-            fp.write(post)
+            # Compile and write the compiled post.
+            with Path("dist", path, f.parts[-1]).with_suffix(".html").open("w") as fp:
+                fp.write(tpl.render(slug=slug, meta=meta, body=post, commit=commit))
 
 
 def compile_feed(posts: PostIndex):
-    # fmt: off
-    feed = Element("feed", xmlns="http://www.w3.org/2005/Atom")
-    SubElement(feed, "title").text = "sunsetglow"
-    SubElement(feed, "link", href="https://sunsetglow.net/atom.xml", rel="self", type="application/atom+xml")
-    SubElement(feed, "link", href="https://sunsetglow.net/", rel="alternate", type="text/html")
-    SubElement(feed, "updated").text = site_updated_at().isoformat()
-    SubElement(feed, "id").text = "tag:sunsetglow.net,2024:site"
+    table = [
+        ("posts", "longform", posts.longform),
+        ("scribbles", "shortform", posts.shortform),
+    ]
+    for path, title, entries in table:
+        feed = Element("feed", xmlns="http://www.w3.org/2005/Atom")
+        SubElement(feed, "title").text = f"sunsetglow :: {title}"
+        SubElement(feed, "link", href="https://sunsetglow.net/atom.xml", rel="self", type="application/atom+xml")
+        SubElement(feed, "link", href="https://sunsetglow.net/", rel="alternate", type="text/html")
+        SubElement(feed, "updated").text = site_updated_at().isoformat()
+        SubElement(feed, "id").text = "tag:sunsetglow.net,2024:site"
 
-    for slug, meta in posts.items():
-        if not meta.public:
-            continue
-        post = SubElement(feed, "entry")
-        SubElement(post, "id").text = f"tag:sunsetglow.net,{meta.timestamp.strftime('%Y-%m-%d')}:{slug}"
-        SubElement(post, "link", href=f"https://sunsetglow.net/posts/{slug}.html", type="text/html")
-        SubElement(post, "title").text = meta.title
-        SubElement(post, "published").text = meta.timestamp.isoformat()
-        SubElement(post, "updated").text = (meta.lastupdated or meta.timestamp).isoformat()
+        for slug, meta in entries.items():
+            post = SubElement(feed, "entry")
+            SubElement(post, "id").text = f"tag:sunsetglow.net,{meta.timestamp.strftime('%Y-%m-%d')}:{slug}"
+            SubElement(post, "link", href=f"https://sunsetglow.net/{path}/{slug}.html", type="text/html")
+            SubElement(post, "title").text = meta.title
+            SubElement(post, "published").text = meta.timestamp.isoformat()
+            SubElement(post, "updated").text = meta.lastupdated.isoformat()
 
-        author = SubElement(post, "author")
-        SubElement(author, "name").text = "blissful"
-        SubElement(author, "email").text = "blissful@sunsetglow.net"
-    # fmt: on
+            author = SubElement(post, "author")
+            SubElement(author, "name").text = "acid angel from asia"
+            SubElement(author, "email").text = "contact@sunsetglow.net"
 
-    tree = ElementTree(feed)
-    with open("dist/atom.xml", "wb") as fh:
-        tree.write(fh, encoding="utf-8", xml_declaration=True)
+        tree = ElementTree(feed)
+        with open(f"dist/{path}/atom.xml", "wb") as fh:
+            tree.write(fh, encoding="utf-8", xml_declaration=True)
 
 
 def main():
     os.chdir(PROJECT_DIR)
 
     with Path("src/posts/index.json").open("r") as fp:
-        posts = {k: PostMeta.parse(k, v) for k, v in json.load(fp).items()}
+        index = json.load(fp)
+        posts = PostIndex(
+            longform={k: PostMeta.parse(k, v) for k, v in index["longform"].items()},
+            shortform={k: PostMeta.parse(k, v) for k, v in index["shortform"].items()},
+        )
 
-    r = subprocess.run(
-        ["git", "rev-parse", "--short", "HEAD"],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    r = subprocess.run(["git", "rev-parse", "--short", "HEAD"], check=True, capture_output=True, text=True)
     commit = r.stdout.strip()
 
     empty_dist()
