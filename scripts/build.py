@@ -143,18 +143,18 @@ def compile_posts(posts: PostIndex, commit: str):
 
 
 def compile_feed(posts: PostIndex):
-    table = [
-        ("posts", "longform", posts.longform),
-        ("scribbles", "shortform", posts.shortform),
-    ]
-    for path, title, entries in table:
-        feed = Element("feed", xmlns="http://www.w3.org/2005/Atom")
-        SubElement(feed, "title").text = f"sunsetglow :: {title}"
-        SubElement(feed, "link", href="https://sunsetglow.net/atom.xml", rel="self", type="application/atom+xml")
-        SubElement(feed, "link", href="https://sunsetglow.net/", rel="alternate", type="text/html")
-        SubElement(feed, "updated").text = site_updated_at().isoformat()
-        SubElement(feed, "id").text = "tag:sunsetglow.net,2024:site"
+    feed = Element("feed", xmlns="http://www.w3.org/2005/Atom")
+    SubElement(feed, "title").text = "sunsetglow"
+    SubElement(feed, "link", href="https://sunsetglow.net/atom.xml", rel="self", type="application/atom+xml")
+    SubElement(feed, "link", href="https://sunsetglow.net/", rel="alternate", type="text/html")
+    SubElement(feed, "updated").text = site_updated_at().isoformat()
+    SubElement(feed, "id").text = "tag:sunsetglow.net,2024:site"
 
+    table = [
+        ("posts", posts.longform),
+        ("scribbles", posts.shortform),
+    ]
+    for path, entries in table:
         for slug, meta in entries.items():
             post = SubElement(feed, "entry")
             SubElement(post, "id").text = f"tag:sunsetglow.net,{meta.timestamp.strftime('%Y-%m-%d')}:{slug}"
@@ -167,9 +167,9 @@ def compile_feed(posts: PostIndex):
             SubElement(author, "name").text = "acid angel from asia"
             SubElement(author, "email").text = "contact@sunsetglow.net"
 
-        tree = ElementTree(feed)
-        with open(f"dist/{path}/atom.xml", "wb") as fh:
-            tree.write(fh, encoding="utf-8", xml_declaration=True)
+    tree = ElementTree(feed)
+    with open("dist/atom.xml", "wb") as fh:
+        tree.write(fh, encoding="utf-8", xml_declaration=True)
 
 
 def main():
